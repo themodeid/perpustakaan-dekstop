@@ -73,7 +73,7 @@ public class FormMasterBuku extends JPanel {
         filterPanel.setBackground(Color.WHITE);
         filterPanel.setBorder(UIConstants.createCardBorder());
 
-        filterPanel.add(new JLabel("Pencarian (Kode / Judul):"));
+        filterPanel.add(new JLabel("Pencarian:"));
         txtSearch = new JTextField(20);
         txtSearch.setFont(UIConstants.FONT_REGULAR);
         txtSearch.setPreferredSize(new Dimension(200, 32));
@@ -94,7 +94,7 @@ public class FormMasterBuku extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(UIConstants.createCardBorder());
 
-        String[] columns = {"ID", "Kode Buku", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Total Stok", "Tersedia"};
+        String[] columns = {"ID", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Total Stok", "Tersedia"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -111,12 +111,18 @@ public class FormMasterBuku extends JPanel {
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(1).setPreferredWidth(120);
-        table.getColumnModel().getColumn(2).setPreferredWidth(230);
-        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setPreferredWidth(250);
+        table.getColumnModel().getColumn(2).setPreferredWidth(160);
+        table.getColumnModel().getColumn(3).setPreferredWidth(140);
+        table.getColumnModel().getColumn(4).setPreferredWidth(60);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(5).setPreferredWidth(160);
+        table.getColumnModel().getColumn(6).setPreferredWidth(80);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(7).setPreferredWidth(70);
         table.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(8).setPreferredWidth(70);
         table.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(9).setCellRenderer(centerRenderer);
 
         tableContainer.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -140,28 +146,26 @@ public class FormMasterBuku extends JPanel {
         btnEdit.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "Pilih buku yang ingin diedit dari tabel!");
+                JOptionPane.showMessageDialog(this, "Pilih buku yang ingin diedit!");
                 return;
             }
             int id = (int) tableModel.getValueAt(row, 0);
             try {
-                Buku buku = bukuDAO.getById(id);
-                if (buku != null) {
-                    openBukuDialog(buku);
-                }
+                Buku b = bukuDAO.getById(id);
+                if (b != null) openBukuDialog(b);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Gagal mengambil data: " + ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }
         });
 
         btnHapus.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus dari tabel!");
+                JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus!");
                 return;
             }
             int id = (int) tableModel.getValueAt(row, 0);
-            String judul = (String) tableModel.getValueAt(row, 2);
+            String judul = (String) tableModel.getValueAt(row, 1);
 
             int conf = JOptionPane.showConfirmDialog(this, 
                     "Hapus buku: '" + judul + "'?", 
@@ -222,7 +226,6 @@ public class FormMasterBuku extends JPanel {
             String displayRak = b.getKodeRak() != null ? b.getKodeRak() : "-";
             tableModel.addRow(new Object[]{
                     b.getId(),
-                    b.getIsbn(),
                     b.getJudul(),
                     b.getPengarang(),
                     b.getPenerbit(),
@@ -238,7 +241,7 @@ public class FormMasterBuku extends JPanel {
     private void openBukuDialog(Buku bukuToEdit) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), 
                 bukuToEdit == null ? "Tambah Buku Baru" : "Edit Buku", true);
-        dialog.setSize(480, 520);
+        dialog.setSize(480, 480);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout());
 
@@ -246,9 +249,8 @@ public class FormMasterBuku extends JPanel {
         form.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(6, 6, 6, 6);
 
-        JTextField txtIsbn = new JTextField();
         JTextField txtJudul = new JTextField();
         JTextField txtPengarang = new JTextField();
         JTextField txtPenerbit = new JTextField();
@@ -269,7 +271,6 @@ public class FormMasterBuku extends JPanel {
         } catch (Exception ignored) {}
 
         if (bukuToEdit != null) {
-            txtIsbn.setText(bukuToEdit.getIsbn());
             txtJudul.setText(bukuToEdit.getJudul());
             txtPengarang.setText(bukuToEdit.getPengarang());
             txtPenerbit.setText(bukuToEdit.getPenerbit());
@@ -287,13 +288,9 @@ public class FormMasterBuku extends JPanel {
                     break;
                 }
             }
-        } else {
-            // Auto generate kode buku sederhana
-            txtIsbn.setText("BK-" + String.format("%03d", tableModel.getRowCount() + 1));
         }
 
         int row = 0;
-        addFormField(form, gbc, row++, "Kode Buku:", txtIsbn);
         addFormField(form, gbc, row++, "Judul Buku:", txtJudul);
         addFormField(form, gbc, row++, "Pengarang:", txtPengarang);
         addFormField(form, gbc, row++, "Penerbit:", txtPenerbit);
@@ -311,7 +308,6 @@ public class FormMasterBuku extends JPanel {
 
         btnBatal.addActionListener(e -> dialog.dispose());
         btnSimpan.addActionListener(e -> {
-            String isbn = txtIsbn.getText().trim();
             String judul = txtJudul.getText().trim();
             String pengarang = txtPengarang.getText().trim();
             String penerbit = txtPenerbit.getText().trim();
@@ -320,7 +316,7 @@ public class FormMasterBuku extends JPanel {
             Rak selectedRak = (Rak) cbRak.getSelectedItem();
             int totalStok = (int) spStok.getValue();
 
-            if (isbn.isEmpty() || judul.isEmpty() || pengarang.isEmpty() || penerbit.isEmpty() || selectedKat == null || selectedRak == null) {
+            if (judul.isEmpty() || pengarang.isEmpty() || penerbit.isEmpty() || selectedKat == null || selectedRak == null) {
                 JOptionPane.showMessageDialog(dialog, "Semua kolom wajib diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -334,21 +330,14 @@ public class FormMasterBuku extends JPanel {
             }
 
             try {
-                int editId = (bukuToEdit != null) ? bukuToEdit.getId() : 0;
-                if (bukuDAO.isIsbnExists(isbn, editId)) {
-                    JOptionPane.showMessageDialog(dialog, "Kode Buku sudah terdaftar pada buku lain!", "Validasi", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
                 if (bukuToEdit == null) {
-                    Buku b = new Buku(0, isbn, judul, pengarang, penerbit, tahun, selectedKat.getId(), selectedRak.getId(), totalStok, totalStok);
+                    Buku b = new Buku(0, judul, pengarang, penerbit, tahun, selectedKat.getId(), selectedRak.getId(), totalStok, totalStok);
                     bukuDAO.insert(b);
                     JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan!");
                 } else {
                     int selisihStok = totalStok - bukuToEdit.getStokTotal();
                     int stokTersediaBaru = Math.max(0, bukuToEdit.getStokTersedia() + selisihStok);
 
-                    bukuToEdit.setIsbn(isbn);
                     bukuToEdit.setJudul(judul);
                     bukuToEdit.setPengarang(pengarang);
                     bukuToEdit.setPenerbit(penerbit);
@@ -374,15 +363,17 @@ public class FormMasterBuku extends JPanel {
         dialog.setVisible(true);
     }
 
-    private void addFormField(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent comp) {
+    private void addFormField(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent field) {
         gbc.gridx = 0;
         gbc.gridy = row;
-        gbc.weightx = 0.35;
-        panel.add(new JLabel(label), gbc);
+        gbc.weightx = 0.3;
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(UIConstants.FONT_BOLD);
+        panel.add(lbl, gbc);
 
         gbc.gridx = 1;
-        gbc.weightx = 0.65;
-        comp.setPreferredSize(new Dimension(200, 30));
-        panel.add(comp, gbc);
+        gbc.weightx = 0.7;
+        field.setPreferredSize(new Dimension(200, 32));
+        panel.add(field, gbc);
     }
 }

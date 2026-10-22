@@ -62,7 +62,7 @@ public class FormLaporanBuku extends JPanel {
         tableCard.setBackground(Color.WHITE);
         tableCard.setBorder(UIConstants.createCardBorder());
 
-        String[] cols = {"No", "Kode Buku", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok Total", "Tersedia"};
+        String[] cols = {"No", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok Total", "Tersedia"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -76,12 +76,18 @@ public class FormLaporanBuku extends JPanel {
         cr.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(0).setPreferredWidth(35);
         table.getColumnModel().getColumn(0).setCellRenderer(cr);
-        table.getColumnModel().getColumn(1).setPreferredWidth(120);
-        table.getColumnModel().getColumn(2).setPreferredWidth(220);
-        table.getColumnModel().getColumn(5).setCellRenderer(cr);
+        table.getColumnModel().getColumn(1).setPreferredWidth(260);
+        table.getColumnModel().getColumn(2).setPreferredWidth(160);
+        table.getColumnModel().getColumn(3).setPreferredWidth(140);
+        table.getColumnModel().getColumn(4).setPreferredWidth(60);
+        table.getColumnModel().getColumn(4).setCellRenderer(cr);
+        table.getColumnModel().getColumn(5).setPreferredWidth(160);
+        table.getColumnModel().getColumn(6).setPreferredWidth(80);
+        table.getColumnModel().getColumn(6).setCellRenderer(cr);
+        table.getColumnModel().getColumn(7).setPreferredWidth(70);
         table.getColumnModel().getColumn(7).setCellRenderer(cr);
+        table.getColumnModel().getColumn(8).setPreferredWidth(70);
         table.getColumnModel().getColumn(8).setCellRenderer(cr);
-        table.getColumnModel().getColumn(9).setCellRenderer(cr);
 
         tableCard.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -103,8 +109,8 @@ public class FormLaporanBuku extends JPanel {
                 JOptionPane.showMessageDialog(this, "Tidak ada data buku untuk dicetak!");
                 return;
             }
-            String[] headers = {"No", "Kode Buku", "Judul Buku", "Pengarang", "Kategori", "Rak", "Stok"};
-            int[] weights = {1, 3, 6, 4, 3, 1, 2};
+            String[] headers = {"No", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok"};
+            int[] weights = {1, 6, 4, 3, 1, 3, 1, 2};
             List<String[]> rows = new ArrayList<>();
             int no = 1;
             int totalStok = 0;
@@ -112,9 +118,10 @@ public class FormLaporanBuku extends JPanel {
                 totalStok += b.getStokTotal();
                 rows.add(new String[]{
                         String.valueOf(no++),
-                        b.getKodeBuku(),
                         b.getJudul(),
                         b.getPengarang(),
+                        b.getPenerbit(),
+                        String.valueOf(b.getTahunTerbit()),
                         b.getNamaKategori() != null ? b.getNamaKategori() : "-",
                         b.getKodeRak() != null ? b.getKodeRak() : "-",
                         b.getStokTersedia() + " / " + b.getStokTotal()
@@ -140,7 +147,7 @@ public class FormLaporanBuku extends JPanel {
             if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
                     layananLaporan.exportLaporanBuku(chooser.getSelectedFile(), currentList);
-                    JOptionPane.showMessageDialog(this, "Laporan data buku berhasil diekspor!", "Ekspor Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Laporan berhasil diekspor ke: " + chooser.getSelectedFile().getName());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Gagal mengekspor: " + ex.getMessage());
                 }
@@ -156,7 +163,6 @@ public class FormLaporanBuku extends JPanel {
             for (Buku b : currentList) {
                 tableModel.addRow(new Object[]{
                         no++,
-                        b.getIsbn(),
                         b.getJudul(),
                         b.getPengarang(),
                         b.getPenerbit(),

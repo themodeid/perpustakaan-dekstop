@@ -144,7 +144,7 @@ public class FormTransaksiPeminjaman extends JPanel {
         cartHeader.add(btnHapusBuku, BorderLayout.EAST);
         cartCard.add(cartHeader, BorderLayout.NORTH);
 
-        String[] columns = {"ID Buku", "Kode Buku", "Judul Buku", "Pengarang"};
+        String[] columns = {"ID Buku", "Judul Buku", "Pengarang"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -247,12 +247,12 @@ public class FormTransaksiPeminjaman extends JPanel {
         String namaPetugas = LayananAutentikasi.getInstance().getCurrentUser() != null ?
                 LayananAutentikasi.getInstance().getCurrentUser().getNamaLengkap() : "Petugas";
 
-        String[] headers = {"No", "Kode Buku", "Judul Buku", "Pengarang"};
-        int[] weights = {1, 3, 7, 4};
+        String[] headers = {"No", "Judul Buku", "Pengarang"};
+        int[] weights = {1, 9, 5};
         List<String[]> rows = new ArrayList<>();
         int no = 1;
         for (Buku b : bukuList) {
-            rows.add(new String[]{String.valueOf(no++), b.getKodeBuku(), b.getJudul(), b.getPengarang()});
+            rows.add(new String[]{String.valueOf(no++), b.getJudul(), b.getPengarang()});
         }
 
         String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Peminjam: " + anggota.getNama() + " (" + anggota.getNim() + ")";
@@ -276,7 +276,7 @@ public class FormTransaksiPeminjaman extends JPanel {
     private void refreshKeranjangTable() {
         tableModel.setRowCount(0);
         for (Buku b : keranjangBuku) {
-            tableModel.addRow(new Object[]{b.getId(), b.getIsbn(), b.getJudul(), b.getPengarang()});
+            tableModel.addRow(new Object[]{b.getId(), b.getJudul(), b.getPengarang()});
         }
     }
 

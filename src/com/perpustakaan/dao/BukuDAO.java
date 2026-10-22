@@ -36,7 +36,7 @@ public class BukuDAO {
                 "LEFT JOIN rak r ON b.rak_id = r.id WHERE b.is_deleted = 0 ");
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append("AND (b.judul LIKE ? OR b.isbn LIKE ? OR b.pengarang LIKE ? OR b.penerbit LIKE ?) ");
+            sql.append("AND (b.judul LIKE ? OR b.pengarang LIKE ? OR b.penerbit LIKE ?) ");
         }
         if (kategoriId != null && kategoriId > 0) {
             sql.append("AND b.kategori_id = ? ");
@@ -51,7 +51,6 @@ public class BukuDAO {
             int idx = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String p = "%" + keyword.trim() + "%";
-                ps.setString(idx++, p);
                 ps.setString(idx++, p);
                 ps.setString(idx++, p);
                 ps.setString(idx++, p);
@@ -89,19 +88,18 @@ public class BukuDAO {
     }
 
     public boolean insert(Buku b) throws SQLException {
-        String sql = "INSERT INTO buku (isbn, judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+        String sql = "INSERT INTO buku (judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, b.getIsbn());
-            ps.setString(2, b.getJudul());
-            ps.setString(3, b.getPengarang());
-            ps.setString(4, b.getPenerbit());
-            ps.setInt(5, b.getTahunTerbit());
-            ps.setInt(6, b.getKategoriId());
-            ps.setInt(7, b.getRakId() > 0 ? b.getRakId() : 1);
-            ps.setInt(8, b.getStokTotal());
-            ps.setInt(9, b.getStokTersedia());
+            ps.setString(1, b.getJudul());
+            ps.setString(2, b.getPengarang());
+            ps.setString(3, b.getPenerbit());
+            ps.setInt(4, b.getTahunTerbit());
+            ps.setInt(5, b.getKategoriId());
+            ps.setInt(6, b.getRakId() > 0 ? b.getRakId() : 1);
+            ps.setInt(7, b.getStokTotal());
+            ps.setInt(8, b.getStokTersedia());
             int affected = ps.executeUpdate();
             if (affected > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -116,20 +114,19 @@ public class BukuDAO {
     }
 
     public boolean update(Buku b) throws SQLException {
-        String sql = "UPDATE buku SET isbn = ?, judul = ?, pengarang = ?, penerbit = ?, " +
+        String sql = "UPDATE buku SET judul = ?, pengarang = ?, penerbit = ?, " +
                      "tahun_terbit = ?, kategori_id = ?, rak_id = ?, stok_total = ?, stok_tersedia = ? WHERE id = ? AND is_deleted = 0";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, b.getIsbn());
-            ps.setString(2, b.getJudul());
-            ps.setString(3, b.getPengarang());
-            ps.setString(4, b.getPenerbit());
-            ps.setInt(5, b.getTahunTerbit());
-            ps.setInt(6, b.getKategoriId());
-            ps.setInt(7, b.getRakId() > 0 ? b.getRakId() : 1);
-            ps.setInt(8, b.getStokTotal());
-            ps.setInt(9, b.getStokTersedia());
-            ps.setInt(10, b.getId());
+            ps.setString(1, b.getJudul());
+            ps.setString(2, b.getPengarang());
+            ps.setString(3, b.getPenerbit());
+            ps.setInt(4, b.getTahunTerbit());
+            ps.setInt(5, b.getKategoriId());
+            ps.setInt(6, b.getRakId() > 0 ? b.getRakId() : 1);
+            ps.setInt(7, b.getStokTotal());
+            ps.setInt(8, b.getStokTersedia());
+            ps.setInt(9, b.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -144,28 +141,13 @@ public class BukuDAO {
         }
     }
 
-    public boolean isIsbnExists(String isbn, int excludeId) throws SQLException {
-        String sql = "SELECT id FROM buku WHERE isbn = ? AND id != ? AND is_deleted = 0";
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, isbn);
-            ps.setInt(2, excludeId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        }
-    }
-
     public void kurangiStok(Connection conn, int bukuId, int qty) throws SQLException {
         String sql = "UPDATE buku SET stok_tersedia = stok_tersedia - ? WHERE id = ? AND stok_tersedia >= ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, qty);
             ps.setInt(2, bukuId);
             ps.setInt(3, qty);
-            int affected = ps.executeUpdate();
-            if (affected == 0) {
-                throw new SQLException("Stok buku tidak mencukupi untuk dipinjam!");
-            }
+            ps.executeUpdate();
         }
     }
 
@@ -179,7 +161,7 @@ public class BukuDAO {
     }
 
     public int countTotalBuku() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM buku";
+        String sql = "SELECT COUNT(*) FROM buku WHERE is_deleted = 0";
         try (Connection conn = DatabaseConfig.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -189,7 +171,7 @@ public class BukuDAO {
     }
 
     public int countBukuDipinjam() throws SQLException {
-        String sql = "SELECT COALESCE(SUM(stok_total - stok_tersedia), 0) FROM buku";
+        String sql = "SELECT COALESCE(SUM(stok_total - stok_tersedia), 0) FROM buku WHERE is_deleted = 0";
         try (Connection conn = DatabaseConfig.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -201,7 +183,6 @@ public class BukuDAO {
     private Buku mapResultSetToBuku(ResultSet rs) throws SQLException {
         Buku b = new Buku();
         b.setId(rs.getInt("id"));
-        b.setIsbn(rs.getString("isbn"));
         b.setJudul(rs.getString("judul"));
         b.setPengarang(rs.getString("pengarang"));
         b.setPenerbit(rs.getString("penerbit"));

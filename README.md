@@ -90,7 +90,7 @@ Cukup jalankan file **`run.bat`**:
 ## ✨ Menu & Fitur Lengkap (Sesuai Silabus Pemrograman Visual)
 
 ### 📁 FORM MASTER
-1. **Data Buku**: Input, edit, hapus, dan pencarian judul, ISBN, pengarang, kategori, serta pemilihan lokasi Rak Buku.
+1. **Data Buku**: Input, edit, hapus, dan pencarian judul, pengarang, penerbit, tahun, kategori, serta pemilihan lokasi Rak Buku.
 2. **Data Anggota**: Pendaftaran anggota, NIM, nama, jurusan, no. telepon, email, dan status aktif/nonaktif.
 3. **Data Petugas**: Manajemen akun admin & petugas perpustakaan (khusus role Admin).
 4. **Rak Buku**: Master penataan lokasi fisik buku (Kode Rak, Nama Rak, Lokasi / Lantai).

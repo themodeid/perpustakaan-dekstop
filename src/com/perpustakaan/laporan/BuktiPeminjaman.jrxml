@@ -12,7 +12,6 @@
     <parameter name="TGL_PINJAM" class="java.lang.String"/>
     <parameter name="TGL_JATUH_TEMPO" class="java.lang.String"/>
     
-    <field name="isbn" class="java.lang.String"/>
     <field name="judul_buku" class="java.lang.String"/>
     <field name="pengarang" class="java.lang.String"/>
     

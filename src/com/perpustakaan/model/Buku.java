@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 
 public class Buku {
     private int id;
-    private String isbn;
     private String judul;
     private String pengarang;
     private String penerbit;
@@ -21,10 +20,9 @@ public class Buku {
 
     public Buku() {}
 
-    public Buku(int id, String isbn, String judul, String pengarang, String penerbit, 
+    public Buku(int id, String judul, String pengarang, String penerbit, 
                 int tahunTerbit, int kategoriId, int rakId, int stokTotal, int stokTersedia) {
         this.id = id;
-        this.isbn = isbn;
         this.judul = judul;
         this.pengarang = pengarang;
         this.penerbit = penerbit;
@@ -37,12 +35,6 @@ public class Buku {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-
-    public String getIsbn() { return isbn; }
-    public void setIsbn(String isbn) { this.isbn = isbn; }
-
-    public String getKodeBuku() { return isbn; }
-    public void setKodeBuku(String kodeBuku) { this.isbn = kodeBuku; }
 
     public String getJudul() { return judul; }
     public void setJudul(String judul) { this.judul = judul; }

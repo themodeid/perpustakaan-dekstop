@@ -40,12 +40,11 @@ public class LayananLaporan {
     public void exportLaporanBuku(File file, List<Buku> list) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             writer.write('\ufeff');
-            writer.write("No,Kode Buku,Judul Buku,Pengarang,Penerbit,Tahun,Kategori,Rak,Total Stok,Stok Tersedia\n");
+            writer.write("No,Judul Buku,Pengarang,Penerbit,Tahun,Kategori,Rak,Total Stok,Stok Tersedia\n");
             int no = 1;
             for (Buku b : list) {
-                String line = String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",%d,\"%s\",\"%s\",%d,%d\n",
+                String line = String.format("%d,\"%s\",\"%s\",\"%s\",%d,\"%s\",\"%s\",%d,%d\n",
                         no++,
-                        b.getKodeBuku(),
                         escapeCsv(b.getJudul()),
                         escapeCsv(b.getPengarang()),
                         escapeCsv(b.getPenerbit()),

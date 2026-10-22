@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS kategori (
 -- 4. Tabel Buku dengan Soft Delete
 CREATE TABLE IF NOT EXISTS buku (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    isbn VARCHAR(20) NOT NULL UNIQUE,
     judul VARCHAR(200) NOT NULL,
     pengarang VARCHAR(100) NOT NULL,
     penerbit VARCHAR(100) NOT NULL,
@@ -111,14 +110,14 @@ INSERT INTO kategori (id, nama_kategori) VALUES
 (5, 'Sejarah & Filsafat')
 ON DUPLICATE KEY UPDATE nama_kategori=VALUES(nama_kategori);
 
-INSERT INTO buku (isbn, judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) VALUES
-('978-602-02-1234-1', 'Pemrograman Java Berorientasi Objek', 'Erico Darmawan', 'Informatika', 2023, 1, 1, 5, 5, 0),
-('978-602-02-5678-2', 'Algoritma & Struktur Data dengan Java', 'Rinaldi Munir', 'Informatika', 2022, 1, 1, 4, 4, 0),
-('978-602-02-9988-3', 'Basis Data Relasional & MySQL', 'Abdul Kadir', 'Andi Offset', 2021, 1, 1, 6, 6, 0),
-('978-602-04-1122-4', 'Matematika Diskrit Edisi Revisi', 'Rinaldi Munir', 'Informatika', 2020, 2, 2, 3, 3, 0),
-('978-979-30-4455-6', 'Laskar Pelangi', 'Andrea Hirata', 'Bentang Pustaka', 2018, 3, 3, 8, 8, 0),
-('978-979-22-3344-7', 'Bumi Manusia', 'Pramoedya Ananta Toer', 'Hasta Mitra', 2019, 3, 3, 5, 5, 0),
-('978-602-03-7788-9', 'Manajemen Keuangan Modern', 'Bambang Riyanto', 'BPFE', 2022, 4, 4, 4, 4, 0)
+INSERT INTO buku (judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) VALUES
+('Pemrograman Java Berorientasi Objek', 'Erico Darmawan', 'Informatika', 2023, 1, 1, 5, 5, 0),
+('Algoritma & Struktur Data dengan Java', 'Rinaldi Munir', 'Informatika', 2022, 1, 1, 4, 4, 0),
+('Basis Data Relasional & MySQL', 'Abdul Kadir', 'Andi Offset', 2021, 1, 1, 6, 6, 0),
+('Matematika Diskrit Edisi Revisi', 'Rinaldi Munir', 'Informatika', 2020, 2, 2, 3, 3, 0),
+('Laskar Pelangi', 'Andrea Hirata', 'Bentang Pustaka', 2018, 3, 3, 8, 8, 0),
+('Bumi Manusia', 'Pramoedya Ananta Toer', 'Hasta Mitra', 2019, 3, 3, 5, 5, 0),
+('Manajemen Keuangan Modern', 'Bambang Riyanto', 'BPFE', 2022, 4, 4, 4, 4, 0)
 ON DUPLICATE KEY UPDATE judul=VALUES(judul);
 
 INSERT INTO anggota (nim, nama, jurusan, no_telp, email, status, is_deleted) VALUES

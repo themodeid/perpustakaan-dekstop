@@ -10,7 +10,6 @@ public class DetailPeminjaman {
     
     // Informasi tambahan untuk UI/Laporan
     private String judulBuku;
-    private String isbnBuku;
 
     public DetailPeminjaman() {}
 
@@ -35,10 +34,4 @@ public class DetailPeminjaman {
 
     public String getJudulBuku() { return judulBuku; }
     public void setJudulBuku(String judulBuku) { this.judulBuku = judulBuku; }
-
-    public String getIsbnBuku() { return isbnBuku; }
-    public void setIsbnBuku(String isbnBuku) { this.isbnBuku = isbnBuku; }
-
-    public String getKodeBuku() { return isbnBuku; }
-    public void setKodeBuku(String kodeBuku) { this.isbnBuku = kodeBuku; }
 }
