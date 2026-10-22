@@ -70,6 +70,37 @@ public class BukuDAO {
         return list;
     }
 
+    public List<Buku> searchTersedia(String keyword) throws SQLException {
+        List<Buku> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT b.*, k.nama_kategori, r.kode_rak, r.nama_rak, r.lokasi AS lokasi_rak " +
+                "FROM buku b " +
+                "JOIN kategori k ON b.kategori_id = k.id " +
+                "LEFT JOIN rak r ON b.rak_id = r.id " +
+                "WHERE b.is_deleted = 0 AND b.stok_tersedia > 0 ");
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND (b.judul LIKE ? OR b.pengarang LIKE ? OR b.penerbit LIKE ? OR k.nama_kategori LIKE ?) ");
+        }
+        sql.append("ORDER BY b.judul ASC");
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String p = "%" + keyword.trim() + "%";
+                ps.setString(1, p);
+                ps.setString(2, p);
+                ps.setString(3, p);
+                ps.setString(4, p);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToBuku(rs));
+                }
+            }
+        }
+        return list;
+    }
+
     public Buku getById(int id) throws SQLException {
         String sql = "SELECT b.*, k.nama_kategori, r.kode_rak, r.nama_rak, r.lokasi AS lokasi_rak " +
                      "FROM buku b " +

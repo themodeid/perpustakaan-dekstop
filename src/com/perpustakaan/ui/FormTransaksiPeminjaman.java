@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * NAMA FILE : FormTransaksiPeminjaman.java
- * FUNGSI    : Tampilan pemrosesan transaksi peminjaman buku dan cetak bukti transaksi (struk) peminjaman.
+ * FUNGSI    : Tampilan pemrosesan transaksi peminjaman buku, pencarian cepat anggota & buku (lookup dialog), serta cetak struk bukti pinjam.
  */
 public class FormTransaksiPeminjaman extends JPanel {
     private final LayananSirkulasi layananSirkulasi = new LayananSirkulasi();
@@ -76,26 +76,42 @@ public class FormTransaksiPeminjaman extends JPanel {
         lblFormTitle.setFont(UIConstants.FONT_HEADER);
         formCard.add(lblFormTitle, gbc);
 
-        // Anggota
+        // 1. Pilih Anggota
         gbc.gridy = 1; gbc.gridwidth = 1;
-        formCard.add(new JLabel("Pilih Anggota (Aktif):"), gbc);
+        formCard.add(new JLabel("Pilih Anggota:"), gbc);
         gbc.gridx = 1;
+        JPanel panelPilihAnggota = new JPanel(new BorderLayout(6, 0));
+        panelPilihAnggota.setOpaque(false);
         cbAnggota = new JComboBox<>();
-        formCard.add(cbAnggota, gbc);
+        JButton btnCariAnggota = UIConstants.createStyledButton("🔍 Cari", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        btnCariAnggota.setPreferredSize(new Dimension(85, 30));
+        panelPilihAnggota.add(cbAnggota, BorderLayout.CENTER);
+        panelPilihAnggota.add(btnCariAnggota, BorderLayout.EAST);
+        formCard.add(panelPilihAnggota, gbc);
 
-        // Pilih Buku
+        // 2. Pilih Buku
         gbc.gridx = 0; gbc.gridy = 2;
-        formCard.add(new JLabel("Pilih Buku Tersedia:"), gbc);
+        formCard.add(new JLabel("Pilih Buku:"), gbc);
         gbc.gridx = 1;
+        JPanel panelPilihBuku = new JPanel(new BorderLayout(6, 0));
+        panelPilihBuku.setOpaque(false);
         cbBuku = new JComboBox<>();
-        formCard.add(cbBuku, gbc);
+        JButton btnCariBuku = UIConstants.createStyledButton("🔍 Cari", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        btnCariBuku.setPreferredSize(new Dimension(85, 30));
+        panelPilihBuku.add(cbBuku, BorderLayout.CENTER);
+        panelPilihBuku.add(btnCariBuku, BorderLayout.EAST);
+        formCard.add(panelPilihBuku, gbc);
 
-        // Tombol Tambah ke Keranjang
+        // 3. Tombol Tambah ke Keranjang
         gbc.gridx = 1; gbc.gridy = 3;
-        JButton btnTambahBuku = UIConstants.createStyledButton("+ Tambah ke Daftar", UIConstants.PRIMARY_DARK, Color.WHITE);
-        formCard.add(btnTambahBuku, gbc);
+        JPanel panelAksiBuku = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panelAksiBuku.setOpaque(false);
+        JButton btnTambahBuku = UIConstants.createStyledButton("+ Tambah ke Daftar Pinjam", UIConstants.PRIMARY_DARK, Color.WHITE);
+        btnTambahBuku.setPreferredSize(new Dimension(210, 32));
+        panelAksiBuku.add(btnTambahBuku);
+        formCard.add(panelAksiBuku, gbc);
 
-        // Durasi Pinjam
+        // 4. Durasi Pinjam
         gbc.gridx = 0; gbc.gridy = 4;
         formCard.add(new JLabel("Durasi Peminjaman (Hari):"), gbc);
         gbc.gridx = 1;
@@ -103,7 +119,7 @@ public class FormTransaksiPeminjaman extends JPanel {
         spDurasi.addChangeListener(e -> updateTanggalTempo());
         formCard.add(spDurasi, gbc);
 
-        // Tanggal Pinjam
+        // 5. Tanggal Pinjam
         gbc.gridx = 0; gbc.gridy = 5;
         formCard.add(new JLabel("Tanggal Pinjam:"), gbc);
         gbc.gridx = 1;
@@ -111,7 +127,7 @@ public class FormTransaksiPeminjaman extends JPanel {
         lblTglPinjam.setFont(UIConstants.FONT_BOLD);
         formCard.add(lblTglPinjam, gbc);
 
-        // Tanggal Jatuh Tempo
+        // 6. Tanggal Jatuh Tempo
         gbc.gridx = 0; gbc.gridy = 6;
         formCard.add(new JLabel("Tanggal Jatuh Tempo:"), gbc);
         gbc.gridx = 1;
@@ -120,7 +136,7 @@ public class FormTransaksiPeminjaman extends JPanel {
         lblTglTempo.setForeground(UIConstants.ACCENT_ORANGE);
         formCard.add(lblTglTempo, gbc);
 
-        // Catatan
+        // 7. Catatan
         gbc.gridx = 0; gbc.gridy = 7;
         formCard.add(new JLabel("Catatan (Opsional):"), gbc);
         gbc.gridx = 1;
@@ -166,45 +182,55 @@ public class FormTransaksiPeminjaman extends JPanel {
         contentPanel.add(cartCard);
         add(contentPanel, BorderLayout.CENTER);
 
-        // Action Listeners
-        btnTambahBuku.addActionListener(e -> {
-            Buku selectedBuku = (Buku) cbBuku.getSelectedItem();
-            if (selectedBuku == null) {
-                JOptionPane.showMessageDialog(this, "Pilih buku terlebih dahulu!");
-                return;
+        // ================= ACTION LISTENERS =================
+
+        // 1. Tombol Cari Anggota
+        btnCariAnggota.addActionListener(e -> {
+            DialogPilihAnggota dialog = new DialogPilihAnggota(SwingUtilities.getWindowAncestor(this));
+            dialog.setVisible(true);
+            Anggota terpilih = dialog.getSelectedAnggota();
+            if (terpilih != null) {
+                pilihAnggotaDiCombo(terpilih);
             }
-            if (keranjangBuku.size() >= LayananSirkulasi.MAX_BUKU_PINJAM) {
-                JOptionPane.showMessageDialog(this, "Maksimal peminjaman sekaligus adalah " + LayananSirkulasi.MAX_BUKU_PINJAM + " buku!");
-                return;
-            }
-            for (Buku b : keranjangBuku) {
-                if (b.getId() == selectedBuku.getId()) {
-                    JOptionPane.showMessageDialog(this, "Buku ini sudah ada di dalam daftar!");
-                    return;
-                }
-            }
-            keranjangBuku.add(selectedBuku);
-            refreshKeranjangTable();
         });
 
+        // 2. Tombol Cari Buku
+        btnCariBuku.addActionListener(e -> {
+            DialogPilihBuku dialog = new DialogPilihBuku(SwingUtilities.getWindowAncestor(this));
+            dialog.setVisible(true);
+            Buku terpilih = dialog.getSelectedBuku();
+            if (terpilih != null) {
+                pilihBukuDiCombo(terpilih);
+                tambahBukuKeKeranjang(terpilih);
+            }
+        });
+
+        // 3. Tombol Tambah Buku Manual dari Dropdown
+        btnTambahBuku.addActionListener(e -> {
+            Buku selectedBuku = (Buku) cbBuku.getSelectedItem();
+            tambahBukuKeKeranjang(selectedBuku);
+        });
+
+        // 4. Tombol Hapus Buku dari Keranjang
         btnHapusBuku.addActionListener(e -> {
             int row = tblKeranjang.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "Pilih baris buku di daftar yang ingin dihapus!");
+                JOptionPane.showMessageDialog(this, "Pilih baris buku di daftar yang ingin dihapus!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             keranjangBuku.remove(row);
             refreshKeranjangTable();
         });
 
+        // 5. Tombol Simpan Transaksi Peminjaman
         btnSimpanPeminjaman.addActionListener(e -> {
             Anggota anggota = (Anggota) cbAnggota.getSelectedItem();
             if (anggota == null) {
-                JOptionPane.showMessageDialog(this, "Pilih anggota peminjam terlebih dahulu!");
+                JOptionPane.showMessageDialog(this, "Pilih anggota peminjam terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (keranjangBuku.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Daftar buku yang dipinjam masih kosong!");
+                JOptionPane.showMessageDialog(this, "Daftar buku yang dipinjam masih kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -241,6 +267,52 @@ public class FormTransaksiPeminjaman extends JPanel {
                 JOptionPane.showMessageDialog(this, "Gagal memproses peminjaman:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    private void pilihAnggotaDiCombo(Anggota terpilih) {
+        if (terpilih == null) return;
+        for (int i = 0; i < cbAnggota.getItemCount(); i++) {
+            Anggota a = cbAnggota.getItemAt(i);
+            if (a.getId() == terpilih.getId()) {
+                cbAnggota.setSelectedIndex(i);
+                return;
+            }
+        }
+        cbAnggota.addItem(terpilih);
+        cbAnggota.setSelectedItem(terpilih);
+    }
+
+    private void pilihBukuDiCombo(Buku terpilih) {
+        if (terpilih == null) return;
+        for (int i = 0; i < cbBuku.getItemCount(); i++) {
+            Buku b = cbBuku.getItemAt(i);
+            if (b.getId() == terpilih.getId()) {
+                cbBuku.setSelectedIndex(i);
+                return;
+            }
+        }
+        cbBuku.addItem(terpilih);
+        cbBuku.setSelectedItem(terpilih);
+    }
+
+    private boolean tambahBukuKeKeranjang(Buku selectedBuku) {
+        if (selectedBuku == null) {
+            JOptionPane.showMessageDialog(this, "Pilih buku terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (keranjangBuku.size() >= LayananSirkulasi.MAX_BUKU_PINJAM) {
+            JOptionPane.showMessageDialog(this, "Maksimal peminjaman sekaligus adalah " + LayananSirkulasi.MAX_BUKU_PINJAM + " buku!", "Batas Maksimal", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        for (Buku b : keranjangBuku) {
+            if (b.getId() == selectedBuku.getId()) {
+                JOptionPane.showMessageDialog(this, "Buku '" + b.getJudul() + "' sudah ada di dalam daftar pinjam!", "Duplikasi", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+        keranjangBuku.add(selectedBuku);
+        refreshKeranjangTable();
+        return true;
     }
 
     private void cetakBuktiPeminjaman(Peminjaman p, Anggota anggota, List<Buku> bukuList) {

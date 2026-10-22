@@ -53,6 +53,24 @@ public class AnggotaDAO {
         return list;
     }
 
+    public List<Anggota> searchAktifOnly(String keyword) throws SQLException {
+        List<Anggota> list = new ArrayList<>();
+        String sql = "SELECT * FROM anggota WHERE is_deleted = 0 AND status = 'aktif' AND (nim LIKE ? OR nama LIKE ? OR jurusan LIKE ?) ORDER BY nama ASC";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            String p = "%" + (keyword != null ? keyword.trim() : "") + "%";
+            ps.setString(1, p);
+            ps.setString(2, p);
+            ps.setString(3, p);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToAnggota(rs));
+                }
+            }
+        }
+        return list;
+    }
+
     public Anggota getById(int id) throws SQLException {
         String sql = "SELECT * FROM anggota WHERE id = ? AND is_deleted = 0";
         try (Connection conn = DatabaseConfig.getConnection();
