@@ -71,7 +71,7 @@ public class DialogCetakLaporan extends JDialog implements Printable {
         lembarKertasA4 = new JPanel();
         lembarKertasA4.setLayout(new BoxLayout(lembarKertasA4, BoxLayout.Y_AXIS));
         lembarKertasA4.setBackground(Color.WHITE);
-        lembarKertasA4.setPreferredSize(new Dimension(720, Math.max(920, 250 + (barisData.size() * 26) + 180)));
+        lembarKertasA4.setPreferredSize(new Dimension(720, Math.max(960, 250 + (barisData.size() * 26) + 180)));
         lembarKertasA4.setBorder(new CompoundBorder(
                 new LineBorder(new Color(180, 190, 205), 1),
                 new EmptyBorder(30, 40, 30, 40)
@@ -95,29 +95,36 @@ public class DialogCetakLaporan extends JDialog implements Printable {
     private void bangunDokumenKertas() {
         lembarKertasA4.removeAll();
 
-        // 1. KOP SURAT RESMI
-        JPanel kopPanel = new JPanel(new GridLayout(3, 1, 2, 2));
+        // 1. KOP SURAT RESMI (Rapat & Proporsional, Anti-Stretching)
+        JPanel kopPanel = new JPanel();
+        kopPanel.setLayout(new BoxLayout(kopPanel, BoxLayout.Y_AXIS));
         kopPanel.setOpaque(false);
 
         JLabel lblKop1 = new JLabel("PERPUSTAKAAN UNIVERSITAS / INSTITUT", SwingConstants.CENTER);
-        lblKop1.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        lblKop1.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblKop1.setForeground(new Color(15, 23, 42));
+        lblKop1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblKop2 = new JLabel("Jl. Raya Pendidikan No. 123, Gedung Perpustakaan Pusat - Telp: (021) 1234567", SwingConstants.CENTER);
         lblKop2.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblKop2.setForeground(new Color(71, 85, 105));
+        lblKop2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblKop3 = new JLabel("Website: http://perpustakaan.ac.id | Email: perpus@kampus.ac.id", SwingConstants.CENTER);
         lblKop3.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblKop3.setForeground(new Color(71, 85, 105));
+        lblKop3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         kopPanel.add(lblKop1);
+        kopPanel.add(Box.createVerticalStrut(4));
         kopPanel.add(lblKop2);
+        kopPanel.add(Box.createVerticalStrut(2));
         kopPanel.add(lblKop3);
+        kopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
         lembarKertasA4.add(kopPanel);
 
         // Garis Ganda Pemisah Kop
-        lembarKertasA4.add(Box.createVerticalStrut(10));
+        lembarKertasA4.add(Box.createVerticalStrut(8));
         JSeparator line1 = new JSeparator();
         line1.setForeground(Color.BLACK);
         line1.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
@@ -128,7 +135,7 @@ public class DialogCetakLaporan extends JDialog implements Printable {
         line2.setForeground(Color.DARK_GRAY);
         line2.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         lembarKertasA4.add(line2);
-        lembarKertasA4.add(Box.createVerticalStrut(15));
+        lembarKertasA4.add(Box.createVerticalStrut(14));
 
         // 2. JUDUL DOKUMEN & SUB-JUDUL
         JLabel lblJudul = new JLabel(judulDokumen, SwingConstants.CENTER);
@@ -137,13 +144,14 @@ public class DialogCetakLaporan extends JDialog implements Printable {
         lembarKertasA4.add(lblJudul);
 
         if (subJudul != null && !subJudul.isEmpty()) {
+            lembarKertasA4.add(Box.createVerticalStrut(4));
             JLabel lblSub = new JLabel(subJudul, SwingConstants.CENTER);
             lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 11));
             lblSub.setForeground(new Color(100, 116, 139));
             lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
             lembarKertasA4.add(lblSub);
         }
-        lembarKertasA4.add(Box.createVerticalStrut(15));
+        lembarKertasA4.add(Box.createVerticalStrut(14));
 
         // 3. TABEL DATA RESMI
         JPanel tablePanel = new JPanel();
@@ -197,6 +205,7 @@ public class DialogCetakLaporan extends JDialog implements Printable {
             tablePanel.add(rowPanel);
         }
 
+        tablePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28 + (barisData.size() * 24)));
         lembarKertasA4.add(tablePanel);
 
         // 4. RINGKASAN TOTAL
@@ -217,33 +226,70 @@ public class DialogCetakLaporan extends JDialog implements Printable {
             lembarKertasA4.add(summaryPanel);
         }
 
+        // Spacer fleksibel: Menyerap seluruh sisa ruang vertikal kertas
+        lembarKertasA4.add(Box.createVerticalGlue());
+        lembarKertasA4.add(Box.createVerticalStrut(20));
+
         // 5. TANDA TANGAN FORMAL
         if (adaTandaTangan) {
-            lembarKertasA4.add(Box.createVerticalStrut(25));
             JPanel ttdContainer = new JPanel(new BorderLayout());
             ttdContainer.setOpaque(false);
-            ttdContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+            ttdContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 115));
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
             String tglCetak = sdf.format(new Date());
 
             // Tanda Tangan Kiri: Petugas Perpustakaan
-            JPanel ttdKiri = new JPanel(new GridLayout(4, 1, 2, 2));
+            JPanel ttdKiri = new JPanel();
+            ttdKiri.setLayout(new BoxLayout(ttdKiri, BoxLayout.Y_AXIS));
             ttdKiri.setOpaque(false);
             ttdKiri.setPreferredSize(new Dimension(220, 110));
-            ttdKiri.add(new JLabel("Petugas Perpustakaan,", SwingConstants.CENTER));
-            ttdKiri.add(Box.createVerticalStrut(35));
-            ttdKiri.add(new JLabel("______________________", SwingConstants.CENTER));
-            ttdKiri.add(new JLabel("( Staf Pelayanan )", SwingConstants.CENTER));
+
+            JLabel lblPetugas = new JLabel("Petugas Perpustakaan,", SwingConstants.CENTER);
+            lblPetugas.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblPetugas.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
+            JLabel lblGarisKiri = new JLabel("______________________", SwingConstants.CENTER);
+            lblGarisKiri.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JLabel lblNamaKiri = new JLabel("( Staf Pelayanan )", SwingConstants.CENTER);
+            lblNamaKiri.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblNamaKiri.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
+            ttdKiri.add(lblPetugas);
+            ttdKiri.add(Box.createVerticalStrut(40));
+            ttdKiri.add(lblGarisKiri);
+            ttdKiri.add(Box.createVerticalStrut(4));
+            ttdKiri.add(lblNamaKiri);
 
             // Tanda Tangan Kanan: Kepala Perpustakaan
-            JPanel ttdKanan = new JPanel(new GridLayout(4, 1, 2, 2));
+            JPanel ttdKanan = new JPanel();
+            ttdKanan.setLayout(new BoxLayout(ttdKanan, BoxLayout.Y_AXIS));
             ttdKanan.setOpaque(false);
             ttdKanan.setPreferredSize(new Dimension(240, 110));
-            ttdKanan.add(new JLabel("Jakarta, " + tglCetak, SwingConstants.CENTER));
-            ttdKanan.add(new JLabel("Mengetahui, Kepala Perpustakaan", SwingConstants.CENTER));
-            ttdKanan.add(new JLabel("______________________", SwingConstants.CENTER));
-            ttdKanan.add(new JLabel("( NIP. 19800101 200501 1 001 )", SwingConstants.CENTER));
+
+            JLabel lblTgl = new JLabel("Jakarta, " + tglCetak, SwingConstants.CENTER);
+            lblTgl.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblTgl.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
+            JLabel lblKepala = new JLabel("Mengetahui, Kepala Perpustakaan", SwingConstants.CENTER);
+            lblKepala.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblKepala.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
+            JLabel lblGarisKanan = new JLabel("______________________", SwingConstants.CENTER);
+            lblGarisKanan.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JLabel lblNip = new JLabel("( NIP. 19800101 200501 1 001 )", SwingConstants.CENTER);
+            lblNip.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblNip.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+
+            ttdKanan.add(lblTgl);
+            ttdKanan.add(Box.createVerticalStrut(2));
+            ttdKanan.add(lblKepala);
+            ttdKanan.add(Box.createVerticalStrut(38));
+            ttdKanan.add(lblGarisKanan);
+            ttdKanan.add(Box.createVerticalStrut(4));
+            ttdKanan.add(lblNip);
 
             ttdContainer.add(ttdKiri, BorderLayout.WEST);
             ttdContainer.add(ttdKanan, BorderLayout.EAST);
