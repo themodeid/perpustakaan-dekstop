@@ -1,0 +1,65 @@
+-- Migrasi V1: Skema Database Dasar
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    nama_lengkap VARCHAR(100) NOT NULL,
+    role ENUM('admin', 'petugas') NOT NULL DEFAULT 'petugas',
+    no_telp VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS kategori (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_kategori VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS buku (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    isbn VARCHAR(20) NOT NULL UNIQUE,
+    judul VARCHAR(200) NOT NULL,
+    pengarang VARCHAR(100) NOT NULL,
+    penerbit VARCHAR(100) NOT NULL,
+    tahun_terbit INT NOT NULL,
+    kategori_id INT NOT NULL,
+    stok_total INT NOT NULL DEFAULT 1,
+    stok_tersedia INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (kategori_id) REFERENCES kategori(id) ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS anggota (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nim VARCHAR(30) NOT NULL UNIQUE,
+    nama VARCHAR(100) NOT NULL,
+    jurusan VARCHAR(100) NOT NULL,
+    no_telp VARCHAR(20),
+    email VARCHAR(100),
+    status ENUM('aktif', 'nonaktif') NOT NULL DEFAULT 'aktif',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS peminjaman (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kode_transaksi VARCHAR(50) NOT NULL UNIQUE,
+    anggota_id INT NOT NULL,
+    user_id INT NOT NULL,
+    tanggal_pinjam DATE NOT NULL,
+    tanggal_jatuh_tempo DATE NOT NULL,
+    tanggal_kembali DATE NULL,
+    status ENUM('dipinjam', 'kembali', 'terlambat') NOT NULL DEFAULT 'dipinjam',
+    total_denda DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    catatan TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (anggota_id) REFERENCES anggota(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS detail_peminjaman (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    peminjaman_id INT NOT NULL,
+    buku_id INT NOT NULL,
+    denda_per_buku DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (peminjaman_id) REFERENCES peminjaman(id) ON DELETE CASCADE,
+    FOREIGN KEY (buku_id) REFERENCES buku(id) ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

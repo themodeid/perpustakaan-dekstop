@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio / iReport Designer -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="LaporanBuku" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" uuid="b1f3c87e-908a-4db5-9e6b-123456789abc">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    
+    <queryString>
+        <![CDATA[SELECT b.id, b.isbn, b.judul, b.pengarang, b.penerbit, b.tahun_terbit, k.nama_kategori, r.kode_rak, b.stok_total, b.stok_tersedia 
+                 FROM buku b 
+                 LEFT JOIN kategori k ON b.kategori_id = k.id 
+                 LEFT JOIN rak r ON b.rak_id = r.id 
+                 WHERE b.is_deleted = 0 
+                 ORDER BY b.id ASC]]>
+    </queryString>
+    
+    <field name="id" class="java.lang.Integer"/>
+    <field name="isbn" class="java.lang.String"/>
+    <field name="judul" class="java.lang.String"/>
+    <field name="pengarang" class="java.lang.String"/>
+    <field name="penerbit" class="java.lang.String"/>
+    <field name="tahun_terbit" class="java.lang.Integer"/>
+    <field name="nama_kategori" class="java.lang.String"/>
+    <field name="kode_rak" class="java.lang.String"/>
+    <field name="stok_total" class="java.lang.Integer"/>
+    <field name="stok_tersedia" class="java.lang.Integer"/>
+    
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    
+    <title>
+        <band height="90" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="5" width="535" height="24" uuid="t1"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Segoe UI" size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[PERPUSTAKAAN UNIVERSITAS / INSTITUT]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="30" width="535" height="15" uuid="t2"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Segoe UI" size="10"/>
+                </textElement>
+                <text><![CDATA[Jl. Raya Pendidikan No. 123, Gedung Perpustakaan Pusat - Telp: (021) 1234567]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="46" width="535" height="15" uuid="t3"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Segoe UI" size="10"/>
+                </textElement>
+                <text><![CDATA[Website: http://perpustakaan.ac.id | Email: perpus@kampus.ac.id]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="68" width="535" height="1" uuid="l1"/>
+                <graphicElement><pen lineWidth="2.0" lineStyle="Solid"/></graphicElement>
+            </line>
+            <line>
+                <reportElement x="0" y="71" width="535" height="1" uuid="l2"/>
+                <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+            </line>
+        </band>
+    </title>
+    
+    <pageHeader>
+        <band height="40" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="5" width="535" height="20" uuid="ph1"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Segoe UI" size="14" isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[LAPORAN DATA KOLEKSI BUKU PERPUSTAKAAN]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+    
+    <columnHeader>
+        <band height="24" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="24" backcolor="#E2E8F0" uuid="rec1"/>
+                <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="5" y="4" width="30" height="16" uuid="c1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[NO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="40" y="4" width="75" height="16" uuid="c2"/>
+                <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[ISBN]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="120" y="4" width="160" height="16" uuid="c3"/>
+                <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[JUDUL BUKU]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="285" y="4" width="95" height="16" uuid="c4"/>
+                <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[PENGARANG]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="385" y="4" width="65" height="16" uuid="c5"/>
+                <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[KATEGORI]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="455" y="4" width="35" height="16" uuid="c6"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[RAK]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="495" y="4" width="35" height="16" uuid="c7"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[STOK]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField>
+                <reportElement x="5" y="2" width="30" height="16" uuid="d1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="40" y="2" width="75" height="16" uuid="d2"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{isbn}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="120" y="2" width="160" height="16" uuid="d3"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{judul}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="2" width="95" height="16" uuid="d4"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{pengarang}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="385" y="2" width="65" height="16" uuid="d5"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{nama_kategori}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="455" y="2" width="35" height="16" uuid="d6"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{kode_rak} != null ? $F{kode_rak} : "-"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="495" y="2" width="35" height="16" uuid="d7"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{stok_tersedia} + " / " + $F{stok_total}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="19" width="535" height="1" forecolor="#CBD5E1" uuid="ld1"/>
+            </line>
+        </band>
+    </detail>
+    
+    <summary>
+        <band height="120" splitType="Stretch">
+            <textField pattern="dd MMMMM yyyy">
+                <reportElement x="350" y="15" width="180" height="16" uuid="s1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9"/></textElement>
+                <textFieldExpression><![CDATA["Dicetak: " + new java.text.SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("id", "ID")).format(new java.util.Date())]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="350" y="32" width="180" height="16" uuid="s2"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[Mengetahui,]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="350" y="48" width="180" height="16" uuid="s3"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[Kepala Perpustakaan]]></text>
+            </staticText>
+            <line>
+                <reportElement x="375" y="105" width="130" height="1" uuid="s4"/>
+            </line>
+            <staticText>
+                <reportElement x="350" y="107" width="180" height="14" uuid="s5"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9"/></textElement>
+                <text><![CDATA[( ................................................ )]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>

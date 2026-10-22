@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SIPerpus-Desktop-impl" default="default" basedir="..">
+    <property file="nbproject/project.properties"/>
+
+    <target name="default" depends="run"/>
+
+    <target name="-init">
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <path id="javac.classpath.path">
+            <fileset dir="lib">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    </target>
+
+    <target name="compile" depends="-init" description="Compile project">
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" includeantruntime="false" encoding="${source.encoding}" source="${javac.source}" target="${javac.target}">
+            <classpath refid="javac.classpath.path"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Create JAR">
+        <jar destfile="${dist.jar}" basedir="${build.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="lib/flatlaf-3.5.4.jar lib/mysql-connector-j-8.4.0.jar"/>
+            </manifest>
+        </jar>
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="lib"/>
+        </copy>
+    </target>
+
+    <target name="run" depends="compile" description="Run main class">
+        <java classname="${main.class}" fork="true">
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <path refid="javac.classpath.path"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="clean" description="Clean build artifacts">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+</project>

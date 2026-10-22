@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio / iReport Designer -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="LaporanPengembalian" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" uuid="d4e5f6a7-b8c9-0123-defa-123456789034">
+    
+    <parameter name="TGL_MULAI" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["Semua Periode"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="TGL_SELESAI" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["-"]]></defaultValueExpression>
+    </parameter>
+    
+    <queryString>
+        <![CDATA[SELECT p.id, p.kode_transaksi, a.nim, a.nama AS nama_anggota, u.nama_lengkap AS nama_petugas, 
+                        p.tanggal_pinjam, p.tanggal_kembali, p.total_denda, p.catatan 
+                 FROM peminjaman p 
+                 JOIN anggota a ON p.anggota_id = a.id 
+                 JOIN users u ON p.user_id = u.id 
+                 WHERE p.status = 'kembali' 
+                 ORDER BY p.tanggal_kembali DESC]]>
+    </queryString>
+    
+    <field name="id" class="java.lang.Integer"/>
+    <field name="kode_transaksi" class="java.lang.String"/>
+    <field name="nim" class="java.lang.String"/>
+    <field name="nama_anggota" class="java.lang.String"/>
+    <field name="nama_petugas" class="java.lang.String"/>
+    <field name="tanggal_pinjam" class="java.sql.Date"/>
+    <field name="tanggal_kembali" class="java.sql.Date"/>
+    <field name="total_denda" class="java.math.BigDecimal"/>
+    <field name="catatan" class="java.lang.String"/>
+    
+    <variable name="TOTAL_DENDA_SUM" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{total_denda}]]></variableExpression>
+    </variable>
+    
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    
+    <title>
+        <band height="90" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="5" width="535" height="24" uuid="t1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="18" isBold="true"/></textElement>
+                <text><![CDATA[PERPUSTAKAAN UNIVERSITAS / INSTITUT]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="30" width="535" height="15" uuid="t2"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="10"/></textElement>
+                <text><![CDATA[Jl. Raya Pendidikan No. 123, Gedung Perpustakaan Pusat - Telp: (021) 1234567]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="46" width="535" height="15" uuid="t3"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="10"/></textElement>
+                <text><![CDATA[Website: http://perpustakaan.ac.id | Email: perpus@kampus.ac.id]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="68" width="535" height="1" uuid="l1"/>
+                <graphicElement><pen lineWidth="2.0" lineStyle="Solid"/></graphicElement>
+            </line>
+            <line>
+                <reportElement x="0" y="71" width="535" height="1" uuid="l2"/>
+                <graphicElement><pen lineWidth="0.5" lineStyle="Solid"/></graphicElement>
+            </line>
+        </band>
+    </title>
+    
+    <pageHeader>
+        <band height="45" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="5" width="535" height="20" uuid="ph1"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Segoe UI" size="14" isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[LAPORAN PENGEMBALIAN BUKU & REKAPITULASI DENDA]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="25" width="535" height="16" uuid="ph2"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isItalic="true"/></textElement>
+                <textFieldExpression><![CDATA["Periode: " + $P{TGL_MULAI} + " s/d " + $P{TGL_SELESAI}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+    
+    <columnHeader>
+        <band height="24" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="24" backcolor="#E2E8F0" uuid="rec1"/>
+                <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="5" y="4" width="25" height="16" uuid="c1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[NO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="35" y="4" width="100" height="16" uuid="c2"/>
+                <textElement><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[KODE TRX]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="140" y="4" width="60" height="16" uuid="c3"/>
+                <textElement><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[NIM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="205" y="4" width="115" height="16" uuid="c4"/>
+                <textElement><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[NAMA PEMINJAM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="325" y="4" width="65" height="16" uuid="c5"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[TGL PINJAM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="395" y="4" width="65" height="16" uuid="c6"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[KEMBALI]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="465" y="4" width="65" height="16" uuid="c7"/>
+                <textElement textAlignment="Right"><font fontName="Segoe UI" size="8" isBold="true"/></textElement>
+                <text><![CDATA[DENDA (RP)]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField>
+                <reportElement x="5" y="2" width="25" height="16" uuid="d1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="35" y="2" width="100" height="16" uuid="d2"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{kode_transaksi}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="2" width="60" height="16" uuid="d3"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{nim}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="205" y="2" width="115" height="16" uuid="d4"/>
+                <textElement><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{nama_anggota}]]></textFieldExpression>
+            </textField>
+            <textField pattern="yyyy-MM-dd">
+                <reportElement x="325" y="2" width="65" height="16" uuid="d5"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{tanggal_pinjam}]]></textFieldExpression>
+            </textField>
+            <textField pattern="yyyy-MM-dd">
+                <reportElement x="395" y="2" width="65" height="16" uuid="d6"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{tanggal_kembali}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0">
+                <reportElement x="465" y="2" width="65" height="16" uuid="d7"/>
+                <textElement textAlignment="Right"><font fontName="Segoe UI" size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{total_denda}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="19" width="535" height="1" forecolor="#CBD5E1" uuid="ld1"/>
+            </line>
+        </band>
+    </detail>
+    
+    <summary>
+        <band height="140" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="5" width="535" height="24" backcolor="#F1F5F9" uuid="sr1"/>
+                <graphicElement><pen lineWidth="0.5"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="10" y="9" width="300" height="16" uuid="st1"/>
+                <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[TOTAL PENERIMAAN DENDA:]]></text>
+            </staticText>
+            <textField pattern="Rp #,##0">
+                <reportElement x="380" y="9" width="150" height="16" uuid="sv1"/>
+                <textElement textAlignment="Right"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$V{TOTAL_DENDA_SUM} != null ? $V{TOTAL_DENDA_SUM} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+            </textField>
+            
+            <textField pattern="dd MMMMM yyyy">
+                <reportElement x="350" y="40" width="180" height="16" uuid="s1"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9"/></textElement>
+                <textFieldExpression><![CDATA["Dicetak: " + new java.text.SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("id", "ID")).format(new java.util.Date())]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="350" y="57" width="180" height="16" uuid="s2"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[Mengetahui,]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="350" y="73" width="180" height="16" uuid="s3"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
+                <text><![CDATA[Kepala Perpustakaan]]></text>
+            </staticText>
+            <line>
+                <reportElement x="375" y="125" width="130" height="1" uuid="s4"/>
+            </line>
+            <staticText>
+                <reportElement x="350" y="127" width="180" height="14" uuid="s5"/>
+                <textElement textAlignment="Center"><font fontName="Segoe UI" size="9"/></textElement>
+                <text><![CDATA[( ................................................ )]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>

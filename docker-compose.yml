@@ -1,0 +1,23 @@
+﻿services:
+  mysql-db:
+    build: .
+    image: perpus-mysql:latest
+    container_name: perpus-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: perpustakaan_db
+      MYSQL_USER: perpus_user
+      MYSQL_PASSWORD: perpus_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - perpus_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  perpus_mysql_data:
