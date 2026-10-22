@@ -92,7 +92,7 @@
             <staticText>
                 <reportElement x="40" y="4" width="75" height="16" uuid="c2"/>
                 <textElement><font fontName="Segoe UI" size="9" isBold="true"/></textElement>
-                <text><![CDATA[ISBN]]></text>
+                <text><![CDATA[KODE BUKU]]></text>
             </staticText>
             <staticText>
                 <reportElement x="120" y="4" width="160" height="16" uuid="c3"/>

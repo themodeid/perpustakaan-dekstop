@@ -38,4 +38,7 @@ public class DetailPeminjaman {
 
     public String getIsbnBuku() { return isbnBuku; }
     public void setIsbnBuku(String isbnBuku) { this.isbnBuku = isbnBuku; }
+
+    public String getKodeBuku() { return isbnBuku; }
+    public void setKodeBuku(String kodeBuku) { this.isbnBuku = kodeBuku; }
 }

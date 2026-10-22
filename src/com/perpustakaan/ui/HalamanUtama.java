@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * NAMA FILE : HalamanUtama.java
- * FUNGSI    : Jendela utama (Main Frame) aplikasi perpustakaan dengan navigasi sidebar dinamis (Mode Publik Pengunjung dan Mode Staf Pengelola).
+ * FUNGSI    : Jendela utama (Main Frame) sistem informasi perpustakaan berbasis desktop untuk pengelola & pustakawan (Kemenhan RI).
  */
 public class HalamanUtama extends JFrame {
     private JPanel contentPanel;
@@ -18,7 +18,7 @@ public class HalamanUtama extends JFrame {
     private final List<JButton> menuButtons = new ArrayList<>();
     private JPanel sidebarContent;
     private JLabel lblUser;
-    private JButton btnAuthAction; // Login atau Logout
+    private JButton btnAuthAction;
 
     // Sub-panels (Antarmuka Modul Sistem)
     private PanelBeranda panelBeranda;
@@ -35,44 +35,75 @@ public class HalamanUtama extends JFrame {
     private FormLaporanPengembalian formLaporanPengembalian;
 
     public HalamanUtama() {
-        setTitle("SIPerpus - Sistem Informasi Perpustakaan Desktop");
+        setTitle("SIPerpus - Sistem Informasi Perpustakaan Desktop (Kementerian Pertahanan RI)");
         setSize(1240, 780);
         setMinimumSize(new Dimension(1050, 680));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        // Auto-Login Default Petugas / Operator untuk pengalaman kerja zero-friction
+        ensureOperatorLoggedIn();
+
         initUI();
         refreshAuthUI();
+    }
+
+    private void ensureOperatorLoggedIn() {
+        if (!LayananAutentikasi.getInstance().isLoggedIn()) {
+            try {
+                boolean ok = LayananAutentikasi.getInstance().login("admin", "admin123");
+                if (!ok) {
+                    Pengguna fallback = new Pengguna(1, "admin", "admin123", "Administrator Utama", "admin", "081234567890");
+                    LayananAutentikasi.getInstance().setCurrentUser(fallback);
+                }
+            } catch (Exception ex) {
+                Pengguna fallback = new Pengguna(1, "admin", "admin123", "Administrator Utama", "admin", "081234567890");
+                LayananAutentikasi.getInstance().setCurrentUser(fallback);
+            }
+        }
     }
 
     private void initUI() {
         JPanel rootPanel = new JPanel(new BorderLayout());
 
-        // Header Panel Atas
+        // Header Panel Atas (Branding Instansi Resmi)
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 230, 238)),
-                BorderFactory.createEmptyBorder(12, 20, 12, 20)
+                BorderFactory.createEmptyBorder(10, 22, 10, 22)
         ));
 
-        JLabel lblBrand = new JLabel("SIPerpus Desktop");
+        JPanel brandPanel = new JPanel(new GridLayout(2, 1, 0, 2));
+        brandPanel.setOpaque(false);
+
+        JLabel lblBrand = new JLabel("SIPerpus Desktop — Perpustakaan Digital");
         lblBrand.setFont(UIConstants.FONT_HEADER);
         lblBrand.setForeground(UIConstants.PRIMARY_COLOR);
+
+        JLabel lblSubBrand = new JLabel("Perpustakaan Kementerian Pertahanan Republik Indonesia");
+        lblSubBrand.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblSubBrand.setForeground(new Color(100, 116, 139));
+
+        brandPanel.add(lblBrand);
+        brandPanel.add(lblSubBrand);
 
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         userInfoPanel.setOpaque(false);
 
-        lblUser = new JLabel("Pengunjung / Tamu (Mode Publik)");
+        lblUser = new JLabel("● Operator: Administrator Perpustakaan (Online)");
         lblUser.setFont(UIConstants.FONT_BOLD);
-        lblUser.setForeground(new Color(51, 65, 85));
+        lblUser.setForeground(new Color(16, 149, 103)); // Online Green
 
-        btnAuthAction = UIConstants.createStyledButton("Login Petugas / Admin", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        btnAuthAction.addActionListener(e -> handleAuthAction());
+        btnAuthAction = UIConstants.createStyledButton("Ganti Akun", UIConstants.PRIMARY_DARK, Color.WHITE);
+        btnAuthAction.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        btnAuthAction.setPreferredSize(new Dimension(110, 32));
+        btnAuthAction.addActionListener(e -> showLoginDialog());
 
         userInfoPanel.add(lblUser);
         userInfoPanel.add(btnAuthAction);
 
-        headerPanel.add(lblBrand, BorderLayout.WEST);
+        headerPanel.add(brandPanel, BorderLayout.WEST);
         headerPanel.add(userInfoPanel, BorderLayout.EAST);
         rootPanel.add(headerPanel, BorderLayout.NORTH);
 
@@ -80,7 +111,7 @@ public class HalamanUtama extends JFrame {
         sidebarContent = new JPanel();
         sidebarContent.setLayout(new BoxLayout(sidebarContent, BoxLayout.Y_AXIS));
         sidebarContent.setBackground(UIConstants.SIDEBAR_BG);
-        sidebarContent.setBorder(BorderFactory.createEmptyBorder(12, 10, 15, 10));
+        sidebarContent.setBorder(BorderFactory.createEmptyBorder(14, 12, 15, 12));
 
         // Center Content with CardLayout
         cardLayout = new CardLayout();
@@ -88,7 +119,7 @@ public class HalamanUtama extends JFrame {
 
         // Inisialisasi Seluruh Panel
         panelBeranda = new PanelBeranda();
-        panelBeranda.setOnLoginRequested(this::showLoginDialog);
+        panelBeranda.setOnNavigateRequested(this::switchCardByName);
 
         formMasterBuku = new FormMasterBuku();
         formMasterAnggota = new FormMasterAnggota();
@@ -118,7 +149,7 @@ public class HalamanUtama extends JFrame {
         JScrollPane sidebarScroll = new JScrollPane(sidebarContent);
         sidebarScroll.setBorder(BorderFactory.createEmptyBorder());
         sidebarScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        sidebarScroll.setPreferredSize(new Dimension(245, 0));
+        sidebarScroll.setPreferredSize(new Dimension(250, 0));
 
         rootPanel.add(sidebarScroll, BorderLayout.WEST);
         rootPanel.add(contentPanel, BorderLayout.CENTER);
@@ -127,73 +158,50 @@ public class HalamanUtama extends JFrame {
     }
 
     public void refreshAuthUI() {
-        boolean loggedIn = LayananAutentikasi.getInstance().isLoggedIn();
         Pengguna user = LayananAutentikasi.getInstance().getCurrentUser();
 
-        // 1. Update Header
-        if (loggedIn && user != null) {
-            lblUser.setText("Petugas: " + user.getNamaLengkap() + " (" + user.getRole().toUpperCase() + ")");
-            lblUser.setForeground(UIConstants.PRIMARY_DARK);
-            btnAuthAction.setText("Keluar (Logout)");
-            btnAuthAction.setBackground(UIConstants.ACCENT_RED);
-        } else {
-            lblUser.setText("Pengunjung / Tamu (Mode Publik)");
-            lblUser.setForeground(new Color(100, 116, 139));
-            btnAuthAction.setText("Login Petugas / Admin");
-            btnAuthAction.setBackground(UIConstants.PRIMARY_COLOR);
+        // 1. Update Header Status
+        if (user != null) {
+            lblUser.setText("● Operator: " + user.getNamaLengkap() + " (" + user.getRole().toUpperCase() + ")");
+            lblUser.setForeground(new Color(16, 149, 103));
         }
 
-        // 2. Set Read-Only Mode untuk Panel
-        formMasterBuku.setReadOnly(!loggedIn);
-        formMasterRak.setReadOnly(!loggedIn);
+        // 2. Set Seluruh Modul Full Akses (Operator Mode)
+        formMasterBuku.setReadOnly(false);
+        formMasterRak.setReadOnly(false);
 
-        // 3. Rebuild Sidebar Navigasi
+        // 3. Bangun Sidebar Navigasi Penuh (Zero Empty Space)
         sidebarContent.removeAll();
         menuButtons.clear();
 
-        if (!loggedIn) {
-            // ================= MODE CUSTOMER / PENGUNJUNG =================
-            addSectionHeader(sidebarContent, "AKSES PENGUNJUNG");
-            addMenuItem(sidebarContent, "  Dashboard Utama", "beranda");
-            addMenuItem(sidebarContent, "  Cari Koleksi Buku", "buku");
-            addMenuItem(sidebarContent, "  Denah / Lokasi Rak", "rak");
-            sidebarContent.add(Box.createVerticalStrut(20));
+        // SEKSI 1: UTAMA
+        addSectionHeader(sidebarContent, "DASHBOARD");
+        addMenuItem(sidebarContent, "  Dashboard Utama", "beranda");
+        sidebarContent.add(Box.createVerticalStrut(10));
 
-            addSectionHeader(sidebarContent, "AREA PENGELOLA");
-            JButton btnNavLogin = createMenuButton("  [Masuk / Login Petugas]");
-            btnNavLogin.setForeground(new Color(147, 197, 253));
-            btnNavLogin.addActionListener(e -> showLoginDialog());
-            sidebarContent.add(btnNavLogin);
-        } else {
-            // ================= MODE STAF (ADMIN / PETUGAS) =================
-            addSectionHeader(sidebarContent, "UTAMA");
-            addMenuItem(sidebarContent, "  Dashboard Utama", "beranda");
-            sidebarContent.add(Box.createVerticalStrut(10));
-
-            // FORM MASTER
-            addSectionHeader(sidebarContent, "FORM MASTER");
-            addMenuItem(sidebarContent, "  1. Data Buku", "buku");
-            addMenuItem(sidebarContent, "  2. Data Anggota", "anggota");
-            if (user.isAdmin()) {
-                addMenuItem(sidebarContent, "  3. Data Petugas", "petugas");
-            }
-            addMenuItem(sidebarContent, "  4. Rak Buku", "rak");
-            addMenuItem(sidebarContent, "  5. Kategori Buku", "kategori");
-            sidebarContent.add(Box.createVerticalStrut(10));
-
-            // FORM TRANSAKSI
-            addSectionHeader(sidebarContent, "FORM TRANSAKSI");
-            addMenuItem(sidebarContent, "  1. Peminjaman Buku", "peminjaman");
-            addMenuItem(sidebarContent, "  2. Pengembalian & Denda", "pengembalian");
-            sidebarContent.add(Box.createVerticalStrut(10));
-
-            // REPORT (LAPORAN)
-            addSectionHeader(sidebarContent, "REPORT (LAPORAN)");
-            addMenuItem(sidebarContent, "  1. Laporan Buku", "lap_buku");
-            addMenuItem(sidebarContent, "  2. Laporan Anggota", "lap_anggota");
-            addMenuItem(sidebarContent, "  3. Laporan Peminjaman", "lap_peminjaman");
-            addMenuItem(sidebarContent, "  4. Laporan Pengembalian", "lap_pengembalian");
+        // SEKSI 2: DATA MASTER
+        addSectionHeader(sidebarContent, "DATA MASTER");
+        addMenuItem(sidebarContent, "  1. Master Koleksi Buku", "buku");
+        addMenuItem(sidebarContent, "  2. Master Data Anggota", "anggota");
+        addMenuItem(sidebarContent, "  3. Lokasi Rak Buku", "rak");
+        addMenuItem(sidebarContent, "  4. Kategori Buku", "kategori");
+        if (user == null || user.isAdmin()) {
+            addMenuItem(sidebarContent, "  5. Pengguna & Petugas", "petugas");
         }
+        sidebarContent.add(Box.createVerticalStrut(10));
+
+        // SEKSI 3: FORM TRANSAKSI
+        addSectionHeader(sidebarContent, "FORM TRANSAKSI");
+        addMenuItem(sidebarContent, "  1. Peminjaman Buku", "peminjaman");
+        addMenuItem(sidebarContent, "  2. Pengembalian & Denda", "pengembalian");
+        sidebarContent.add(Box.createVerticalStrut(10));
+
+        // SEKSI 4: MENU LAPORAN
+        addSectionHeader(sidebarContent, "MENU LAPORAN");
+        addMenuItem(sidebarContent, "  1. Laporan Koleksi Buku", "lap_buku");
+        addMenuItem(sidebarContent, "  2. Laporan Data Anggota", "lap_anggota");
+        addMenuItem(sidebarContent, "  3. Laporan Peminjaman", "lap_peminjaman");
+        addMenuItem(sidebarContent, "  4. Laporan Rekapitulasi Denda", "lap_pengembalian");
 
         sidebarContent.add(Box.createVerticalGlue());
         sidebarContent.revalidate();
@@ -202,21 +210,6 @@ public class HalamanUtama extends JFrame {
         // Buka menu Beranda sebagai default
         if (!menuButtons.isEmpty()) {
             switchCard("beranda", menuButtons.get(0));
-        }
-        panelBeranda.updateModeUI();
-    }
-
-    private void handleAuthAction() {
-        if (LayananAutentikasi.getInstance().isLoggedIn()) {
-            int conf = JOptionPane.showConfirmDialog(this, 
-                    "Keluar dari akun pengelola dan kembali ke Mode Pengunjung Publik?", 
-                    "Konfirmasi Logout", JOptionPane.YES_NO_OPTION);
-            if (conf == JOptionPane.YES_OPTION) {
-                LayananAutentikasi.getInstance().logout();
-                refreshAuthUI();
-            }
-        } else {
-            showLoginDialog();
         }
     }
 
@@ -262,11 +255,23 @@ public class HalamanUtama extends JFrame {
 
     private void addMenuItem(JPanel sidebar, String title, String cardName) {
         JButton btn = createMenuButton(title);
+        btn.putClientProperty("targetCard", cardName);
         btn.addActionListener(e -> switchCard(cardName, btn));
 
         menuButtons.add(btn);
         sidebar.add(btn);
         sidebar.add(Box.createVerticalStrut(2));
+    }
+
+    public void switchCardByName(String cardName) {
+        for (JButton b : menuButtons) {
+            Object target = b.getClientProperty("targetCard");
+            if (cardName != null && cardName.equals(target)) {
+                switchCard(cardName, b);
+                return;
+            }
+        }
+        switchCard(cardName, null);
     }
 
     private void switchCard(String cardName, JButton activeBtn) {

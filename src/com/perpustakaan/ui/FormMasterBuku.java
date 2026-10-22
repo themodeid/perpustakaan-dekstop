@@ -73,7 +73,7 @@ public class FormMasterBuku extends JPanel {
         filterPanel.setBackground(Color.WHITE);
         filterPanel.setBorder(UIConstants.createCardBorder());
 
-        filterPanel.add(new JLabel("Pencarian:"));
+        filterPanel.add(new JLabel("Pencarian (Kode / Judul):"));
         txtSearch = new JTextField(20);
         txtSearch.setFont(UIConstants.FONT_REGULAR);
         txtSearch.setPreferredSize(new Dimension(200, 32));
@@ -94,7 +94,7 @@ public class FormMasterBuku extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(UIConstants.createCardBorder());
 
-        String[] columns = {"ID", "ISBN", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Total Stok", "Tersedia"};
+        String[] columns = {"ID", "Kode Buku", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Total Stok", "Tersedia"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -287,10 +287,13 @@ public class FormMasterBuku extends JPanel {
                     break;
                 }
             }
+        } else {
+            // Auto generate kode buku sederhana
+            txtIsbn.setText("BK-" + String.format("%03d", tableModel.getRowCount() + 1));
         }
 
         int row = 0;
-        addFormField(form, gbc, row++, "ISBN:", txtIsbn);
+        addFormField(form, gbc, row++, "Kode Buku:", txtIsbn);
         addFormField(form, gbc, row++, "Judul Buku:", txtJudul);
         addFormField(form, gbc, row++, "Pengarang:", txtPengarang);
         addFormField(form, gbc, row++, "Penerbit:", txtPenerbit);
@@ -333,7 +336,7 @@ public class FormMasterBuku extends JPanel {
             try {
                 int editId = (bukuToEdit != null) ? bukuToEdit.getId() : 0;
                 if (bukuDAO.isIsbnExists(isbn, editId)) {
-                    JOptionPane.showMessageDialog(dialog, "ISBN sudah terdaftar pada buku lain!", "Validasi", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(dialog, "Kode Buku sudah terdaftar pada buku lain!", "Validasi", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 

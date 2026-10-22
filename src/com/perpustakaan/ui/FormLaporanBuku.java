@@ -62,7 +62,7 @@ public class FormLaporanBuku extends JPanel {
         tableCard.setBackground(Color.WHITE);
         tableCard.setBorder(UIConstants.createCardBorder());
 
-        String[] cols = {"No", "ISBN", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok Total", "Tersedia"};
+        String[] cols = {"No", "Kode Buku", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok Total", "Tersedia"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -103,7 +103,7 @@ public class FormLaporanBuku extends JPanel {
                 JOptionPane.showMessageDialog(this, "Tidak ada data buku untuk dicetak!");
                 return;
             }
-            String[] headers = {"No", "ISBN", "Judul Buku", "Pengarang", "Kategori", "Rak", "Stok"};
+            String[] headers = {"No", "Kode Buku", "Judul Buku", "Pengarang", "Kategori", "Rak", "Stok"};
             int[] weights = {1, 3, 6, 4, 3, 1, 2};
             List<String[]> rows = new ArrayList<>();
             int no = 1;
@@ -112,7 +112,7 @@ public class FormLaporanBuku extends JPanel {
                 totalStok += b.getStokTotal();
                 rows.add(new String[]{
                         String.valueOf(no++),
-                        b.getIsbn(),
+                        b.getKodeBuku(),
                         b.getJudul(),
                         b.getPengarang(),
                         b.getNamaKategori() != null ? b.getNamaKategori() : "-",

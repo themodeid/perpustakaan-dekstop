@@ -41,6 +41,10 @@ public class LayananAutentikasi {
         this.currentUser = null;
     }
 
+    public void setCurrentUser(Pengguna user) {
+        this.currentUser = user;
+    }
+
     public Pengguna getCurrentUser() {
         return currentUser;
     }

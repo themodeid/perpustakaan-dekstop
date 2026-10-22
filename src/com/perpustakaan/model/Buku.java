@@ -41,6 +41,9 @@ public class Buku {
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
 
+    public String getKodeBuku() { return isbn; }
+    public void setKodeBuku(String kodeBuku) { this.isbn = kodeBuku; }
+
     public String getJudul() { return judul; }
     public void setJudul(String judul) { this.judul = judul; }
 
