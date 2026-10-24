@@ -3,6 +3,7 @@ package com.perpustakaan.ui;
 import com.perpustakaan.dao.PeminjamanDAO;
 import com.perpustakaan.model.DetailPeminjaman;
 import com.perpustakaan.model.Peminjaman;
+import com.perpustakaan.service.LayananAutentikasi;
 import com.perpustakaan.service.LayananSirkulasi;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -84,7 +86,7 @@ public class FormTransaksiPengembalian extends JPanel {
         searchBar.add(btnCari);
         leftCard.add(searchBar, BorderLayout.NORTH);
 
-        String[] cols = {"ID", "Kode Transaksi", "NIM", "Nama Anggota", "Tgl Pinjam", "Jatuh Tempo", "Buku"};
+        String[] cols = {"ID", "Kode Transaksi", "NIP / NRP", "Nama Personel", "Tgl Pinjam", "Jatuh Tempo", "Buku"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -133,7 +135,7 @@ public class FormTransaksiPengembalian extends JPanel {
 
         int r = 0;
         addDetailRow(detailGrid, gbc, r++, "Kode Transaksi:", lblKode);
-        addDetailRow(detailGrid, gbc, r++, "Nama Peminjam:", lblPeminjam);
+        addDetailRow(detailGrid, gbc, r++, "Personel Peminjam:", lblPeminjam);
         addDetailRow(detailGrid, gbc, r++, "Jatuh Tempo:", lblTglTempo);
         addDetailRow(detailGrid, gbc, r++, "Tanggal Pengembalian:", lblTglKembali);
         addDetailRow(detailGrid, gbc, r++, "Status Keterlambatan:", lblStatusTelat);
@@ -142,11 +144,21 @@ public class FormTransaksiPengembalian extends JPanel {
 
         rightCard.add(detailGrid, BorderLayout.CENTER);
 
+        JPanel actionBtnPanel = new JPanel(new GridLayout(2, 1, 0, 8));
+        actionBtnPanel.setOpaque(false);
+
         btnProsesKembali = UIConstants.createStyledButton("Konfirmasi Pengembalian Buku", UIConstants.ACCENT_GREEN, Color.WHITE);
         btnProsesKembali.setFont(UIConstants.FONT_HEADER);
-        btnProsesKembali.setPreferredSize(new Dimension(200, 44));
+        btnProsesKembali.setPreferredSize(new Dimension(200, 42));
         btnProsesKembali.setEnabled(false);
-        rightCard.add(btnProsesKembali, BorderLayout.SOUTH);
+
+        JButton btnCetakBuktiManual = UIConstants.createStyledButton("🧾 Cetak Struk Bukti Pengembalian", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        btnCetakBuktiManual.setFont(UIConstants.FONT_BOLD);
+        btnCetakBuktiManual.setPreferredSize(new Dimension(200, 36));
+
+        actionBtnPanel.add(btnProsesKembali);
+        actionBtnPanel.add(btnCetakBuktiManual);
+        rightCard.add(actionBtnPanel, BorderLayout.SOUTH);
 
         splitPane.setRightComponent(rightCard);
         add(splitPane, BorderLayout.CENTER);
@@ -167,11 +179,21 @@ public class FormTransaksiPengembalian extends JPanel {
             }
         });
 
+        btnCetakBuktiManual.addActionListener(e -> {
+            if (selectedPeminjaman == null) {
+                JOptionPane.showMessageDialog(this, "Pilih transaksi terlebih dahulu untuk mencetak bukti pengembalian!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Date today = Date.valueOf(LocalDate.now());
+            cetakBuktiPengembalian(selectedPeminjaman, today, currentDenda);
+        });
+
         btnProsesKembali.addActionListener(e -> {
             if (selectedPeminjaman == null) return;
 
             int conf = JOptionPane.showConfirmDialog(this, 
                     "Konfirmasi pengembalian untuk transaksi " + selectedPeminjaman.getKodeTransaksi() + "?\n" +
+                    "Peminjam   : " + selectedPeminjaman.getNamaAnggota() + " (" + selectedPeminjaman.getNimAnggota() + ")\n" +
                     "Total Denda: " + lblTotalDenda.getText(), 
                     "Konfirmasi Pengembalian", JOptionPane.YES_NO_OPTION);
 
@@ -179,11 +201,23 @@ public class FormTransaksiPengembalian extends JPanel {
                 try {
                     Date today = Date.valueOf(LocalDate.now());
                     String catatan = txtCatatan.getText().trim();
+                    Peminjaman peminjamanSalinan = selectedPeminjaman;
+                    BigDecimal dendaSalinan = currentDenda;
+
                     layananSirkulasi.prosesPengembalian(selectedPeminjaman.getId(), today, currentDenda, catatan);
 
-                    JOptionPane.showMessageDialog(this, 
-                            "Buku berhasil dikembalikan!\nStok buku telah diperbarui ke rak.", 
-                            "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    int tanyaCetak = JOptionPane.showConfirmDialog(this,
+                            "Buku berhasil dikembalikan dan stok telah dipulihkan ke rak!\n\n" +
+                            "Kode Transaksi : " + peminjamanSalinan.getKodeTransaksi() + "\n" +
+                            "Peminjam       : " + peminjamanSalinan.getNamaAnggota() + " (" + peminjamanSalinan.getNimAnggota() + ")\n" +
+                            "Total Denda    : " + NumberFormat.getCurrencyInstance(new Locale("id", "ID")).format(dendaSalinan) + "\n\n" +
+                            "Apakah Anda ingin langsung mencetak Struk Bukti Pengembalian sekarang?\n" +
+                            "(Dapat dicetak fisik atau disimpan ke PDF untuk diberikan ke personel)",
+                            "Pengembalian Sukses - Cetak Bukti?", JOptionPane.YES_NO_OPTION);
+
+                    if (tanyaCetak == JOptionPane.YES_OPTION) {
+                        cetakBuktiPengembalian(peminjamanSalinan, today, dendaSalinan);
+                    }
 
                     resetDetail();
                     loadDataAktif();
@@ -274,5 +308,39 @@ public class FormTransaksiPengembalian extends JPanel {
         txtCatatan.setText("");
         btnProsesKembali.setEnabled(false);
         tableAktif.clearSelection();
+    }
+
+    private void cetakBuktiPengembalian(Peminjaman p, Date tglKembali, BigDecimal denda) {
+        if (p == null) return;
+        String namaPetugas = LayananAutentikasi.getInstance().getCurrentUser() != null ?
+                LayananAutentikasi.getInstance().getCurrentUser().getNamaLengkap() : "Petugas Layanan Kemhan";
+
+        String[] headers = {"No", "Judul Koleksi Buku", "Pengarang", "Status Pengembalian"};
+        int[] weights = {1, 8, 4, 3};
+        List<String[]> rows = new ArrayList<>();
+        int no = 1;
+        if (p.getDetailList() != null && !p.getDetailList().isEmpty()) {
+            for (DetailPeminjaman dp : p.getDetailList()) {
+                rows.add(new String[]{String.valueOf(no++), dp.getJudulBuku(), dp.getPengarangBuku() != null ? dp.getPengarangBuku() : "-", "Diterima Baik (Rak)"});
+            }
+        } else {
+            rows.add(new String[]{"1", "Koleksi Buku Perpustakaan Kemhan", "Kemhan RI", "Diterima Baik (Rak)"});
+        }
+
+        NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        String dendaStr = nf.format(denda);
+        String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Personel: " + p.getNamaAnggota() + " (NIP/NRP: " + p.getNimAnggota() + ")";
+        String summary = "Tgl Pinjam: " + p.getTanggalPinjam() + "  |  Batas Tempo: " + p.getTanggalJatuhTempo() + "  |  Tgl Pengembalian Riil: " + tglKembali +
+                         "\nStatus Pelunasan: " + (denda.compareTo(BigDecimal.ZERO) > 0 ? "TERLAMBAT - DENDA LUNAS (" + dendaStr + ")" : "TEPAT WAKTU (BEBAS DENDA)") +
+                         "\nPetugas Penerima: " + namaPetugas +
+                         "\n* Tanda terima sah pengembalian buku kedinasan dan penyelesaian sirkulasi Perpustakaan Kemhan RI.";
+
+        DialogCetakLaporan dialog = new DialogCetakLaporan(
+                SwingUtilities.getWindowAncestor(this),
+                "BUKTI RESMI PENGEMBALIAN BUKU & PELUNASAN KEMHAN RI",
+                subJudul,
+                headers, weights, rows, summary, true
+        );
+        dialog.setVisible(true);
     }
 }

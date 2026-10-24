@@ -33,18 +33,20 @@ public class FormMasterAnggota extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("Data Keanggotaan Perpustakaan");
+        JLabel lblTitle = new JLabel("Data Keanggotaan Perpustakaan (Personel Kemhan RI)");
         lblTitle.setFont(UIConstants.FONT_TITLE);
         topPanel.add(lblTitle, BorderLayout.WEST);
 
         JPanel actionBtns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         actionBtns.setOpaque(false);
 
-        JButton btnTambah = UIConstants.createStyledButton("+ Tambah Anggota", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        JButton btnTambah = UIConstants.createStyledButton("+ Tambah Personel", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        JButton btnCetakKta = UIConstants.createStyledButton("💳 Cetak KTA", new Color(13, 148, 136), Color.WHITE);
         JButton btnEdit = UIConstants.createStyledButton("Edit", UIConstants.ACCENT_ORANGE, Color.WHITE);
         JButton btnHapus = UIConstants.createStyledButton("Hapus", UIConstants.ACCENT_RED, Color.WHITE);
 
         actionBtns.add(btnTambah);
+        actionBtns.add(btnCetakKta);
         actionBtns.add(btnEdit);
         actionBtns.add(btnHapus);
         topPanel.add(actionBtns, BorderLayout.EAST);
@@ -56,7 +58,7 @@ public class FormMasterAnggota extends JPanel {
         filterPanel.setBackground(Color.WHITE);
         filterPanel.setBorder(UIConstants.createCardBorder());
 
-        filterPanel.add(new JLabel("Pencarian (NIM / Nama / Jurusan):"));
+        filterPanel.add(new JLabel("Pencarian (NIP/NRP / Nama / Satker):"));
         txtSearch = new JTextField(22);
         txtSearch.setFont(UIConstants.FONT_REGULAR);
         txtSearch.setPreferredSize(new Dimension(220, 32));
@@ -72,7 +74,7 @@ public class FormMasterAnggota extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(UIConstants.createCardBorder());
 
-        String[] columns = {"ID", "NIM", "Nama Anggota", "Jurusan", "No. Telepon", "Email", "Status"};
+        String[] columns = {"ID", "NIP / NRP", "Nama Personel", "Satuan Kerja (Satker)", "No. Telepon", "Email Dinas", "Status"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -110,6 +112,25 @@ public class FormMasterAnggota extends JPanel {
         });
 
         btnTambah.addActionListener(e -> openAnggotaDialog(null));
+        btnCetakKta.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, 
+                        "Pilih salah satu baris personel pada tabel untuk mencetak Kartu Tanda Anggota (KTA)!", 
+                        "Pilih Personel", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int id = (int) tableModel.getValueAt(row, 0);
+            try {
+                Anggota a = anggotaDAO.getById(id);
+                if (a != null) {
+                    DialogCetakKartuAnggota kta = new DialogCetakKartuAnggota(SwingUtilities.getWindowAncestor(this), a);
+                    kta.setVisible(true);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Gagal memuat kartu anggota: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         btnEdit.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row == -1) {
@@ -213,12 +234,12 @@ public class FormMasterAnggota extends JPanel {
         }
 
         int row = 0;
-        addFormField(form, gbc, row++, "NIM / ID Anggota:", txtNim);
-        addFormField(form, gbc, row++, "Nama Lengkap:", txtNama);
-        addFormField(form, gbc, row++, "Jurusan / Prodi:", txtJurusan);
-        addFormField(form, gbc, row++, "Nomor Telepon:", txtTelp);
-        addFormField(form, gbc, row++, "Email:", txtEmail);
-        addFormField(form, gbc, row++, "Status:", cbStatus);
+        addFormField(form, gbc, row++, "NIP / NRP Personel:", txtNim);
+        addFormField(form, gbc, row++, "Nama Lengkap & Gelar:", txtNama);
+        addFormField(form, gbc, row++, "Satuan Kerja (Satker):", txtJurusan);
+        addFormField(form, gbc, row++, "Nomor Telepon / WA:", txtTelp);
+        addFormField(form, gbc, row++, "Email Dinas (@kemhan.go.id):", txtEmail);
+        addFormField(form, gbc, row++, "Status Keanggotaan:", cbStatus);
 
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnSimpan = UIConstants.createStyledButton("Simpan", UIConstants.PRIMARY_COLOR, Color.WHITE);
@@ -237,21 +258,41 @@ public class FormMasterAnggota extends JPanel {
             String status = (String) cbStatus.getSelectedItem();
 
             if (nim.isEmpty() || nama.isEmpty() || jurusan.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "NIM, Nama, dan Jurusan wajib diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, "NIP/NRP, Nama, dan Satuan Kerja (Satker) wajib diisi!", "Validasi Form", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             try {
                 int editId = toEdit != null ? toEdit.getId() : 0;
                 if (anggotaDAO.isNimExists(nim, editId)) {
-                    JOptionPane.showMessageDialog(dialog, "NIM sudah terdaftar untuk anggota lain!", "Validasi", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(dialog, "NIP / NRP sudah terdaftar untuk personel lain!", "Validasi Duplikasi", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
                 if (toEdit == null) {
                     Anggota a = new Anggota(0, nim, nama, jurusan, telp, email, status);
                     anggotaDAO.insert(a);
-                    JOptionPane.showMessageDialog(this, "Anggota berhasil didaftarkan!");
+                    
+                    dialog.dispose();
+                    loadData();
+
+                    // Ambil record yang baru dimasukkan untuk dicetak
+                    List<Anggota> newlyCreated = anggotaDAO.search(nim);
+                    Anggota fresh = !newlyCreated.isEmpty() ? newlyCreated.get(0) : a;
+
+                    int tanyaKta = JOptionPane.showConfirmDialog(this,
+                            "Personel Kemhan RI berhasil didaftarkan sebagai anggota perpustakaan!\n\n" +
+                            "Nama Personel : " + fresh.getNama() + "\n" +
+                            "NIP / NRP     : " + fresh.getNim() + "\n" +
+                            "Satker        : " + fresh.getJurusan() + "\n\n" +
+                            "Apakah Anda ingin mencetak Kartu Tanda Anggota (KTA) resmi sekarang?\n" +
+                            "(Bisa dicetak ke printer fisik atau disimpan ke PDF untuk dikirim via WA / Email)",
+                            "Pendaftaran Berhasil - Cetak KTA?", JOptionPane.YES_NO_OPTION);
+
+                    if (tanyaKta == JOptionPane.YES_OPTION) {
+                        DialogCetakKartuAnggota kta = new DialogCetakKartuAnggota(SwingUtilities.getWindowAncestor(this), fresh);
+                        kta.setVisible(true);
+                    }
                 } else {
                     toEdit.setNim(nim);
                     toEdit.setNama(nama);
@@ -260,11 +301,10 @@ public class FormMasterAnggota extends JPanel {
                     toEdit.setEmail(email);
                     toEdit.setStatus(status);
                     anggotaDAO.update(toEdit);
-                    JOptionPane.showMessageDialog(this, "Data anggota berhasil diperbarui!");
+                    JOptionPane.showMessageDialog(this, "Data personel berhasil diperbarui!");
+                    dialog.dispose();
+                    loadData();
                 }
-
-                dialog.dispose();
-                loadData();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dialog, "Gagal menyimpan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

@@ -100,27 +100,34 @@ public class DialogCetakLaporan extends JDialog implements Printable {
         kopPanel.setLayout(new BoxLayout(kopPanel, BoxLayout.Y_AXIS));
         kopPanel.setOpaque(false);
 
-        JLabel lblKop1 = new JLabel("PERPUSTAKAAN UNIVERSITAS / INSTITUT", SwingConstants.CENTER);
-        lblKop1.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblKop1.setForeground(new Color(15, 23, 42));
+        JLabel lblKop0 = new JLabel("KEMENTERIAN PERTAHANAN REPUBLIK INDONESIA", SwingConstants.CENTER);
+        lblKop0.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblKop0.setForeground(new Color(15, 23, 42));
+        lblKop0.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblKop1 = new JLabel("PERPUSTAKAAN KEMENTERIAN PERTAHANAN RI", SwingConstants.CENTER);
+        lblKop1.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblKop1.setForeground(UIConstants.PRIMARY_COLOR);
         lblKop1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblKop2 = new JLabel("Jl. Raya Pendidikan No. 123, Gedung Perpustakaan Pusat - Telp: (021) 1234567", SwingConstants.CENTER);
-        lblKop2.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        JLabel lblKop2 = new JLabel("Jl. Medan Merdeka Barat No. 13-14, Jakarta Pusat 10110 | Telp: (021) 3829460", SwingConstants.CENTER);
+        lblKop2.setFont(new Font("Segoe UI", Font.PLAIN, 10));
         lblKop2.setForeground(new Color(71, 85, 105));
         lblKop2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblKop3 = new JLabel("Website: http://perpustakaan.ac.id | Email: perpus@kampus.ac.id", SwingConstants.CENTER);
-        lblKop3.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        JLabel lblKop3 = new JLabel("Laman Resmi: www.kemhan.go.id | Email: perpustakaan@kemhan.go.id", SwingConstants.CENTER);
+        lblKop3.setFont(new Font("Segoe UI", Font.PLAIN, 10));
         lblKop3.setForeground(new Color(71, 85, 105));
         lblKop3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        kopPanel.add(lblKop1);
-        kopPanel.add(Box.createVerticalStrut(4));
-        kopPanel.add(lblKop2);
+        kopPanel.add(lblKop0);
         kopPanel.add(Box.createVerticalStrut(2));
+        kopPanel.add(lblKop1);
+        kopPanel.add(Box.createVerticalStrut(2));
+        kopPanel.add(lblKop2);
+        kopPanel.add(Box.createVerticalStrut(1));
         kopPanel.add(lblKop3);
-        kopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+        kopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 68));
         lembarKertasA4.add(kopPanel);
 
         // Garis Ganda Pemisah Kop
@@ -272,16 +279,17 @@ public class DialogCetakLaporan extends JDialog implements Printable {
             lblTgl.setAlignmentX(Component.CENTER_ALIGNMENT);
             lblTgl.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 
-            JLabel lblKepala = new JLabel("Mengetahui, Kepala Perpustakaan", SwingConstants.CENTER);
+            JLabel lblKepala = new JLabel("Mengetahui, Kepala Perpustakaan Kemhan RI", SwingConstants.CENTER);
             lblKepala.setAlignmentX(Component.CENTER_ALIGNMENT);
-            lblKepala.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            lblKepala.setFont(new Font("Segoe UI", Font.BOLD, 11));
 
-            JLabel lblGarisKanan = new JLabel("______________________", SwingConstants.CENTER);
+            JLabel lblGarisKanan = new JLabel("Kolonel Inf. Dr. Suryanto, M.Si.", SwingConstants.CENTER);
             lblGarisKanan.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblGarisKanan.setFont(new Font("Segoe UI", Font.BOLD, 11));
 
-            JLabel lblNip = new JLabel("( NIP. 19800101 200501 1 001 )", SwingConstants.CENTER);
+            JLabel lblNip = new JLabel("NIP. 19750812 200003 1 001", SwingConstants.CENTER);
             lblNip.setAlignmentX(Component.CENTER_ALIGNMENT);
-            lblNip.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            lblNip.setFont(new Font("Segoe UI", Font.PLAIN, 10));
 
             ttdKanan.add(lblTgl);
             ttdKanan.add(Box.createVerticalStrut(2));

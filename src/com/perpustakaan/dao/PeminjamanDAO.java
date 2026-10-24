@@ -74,7 +74,7 @@ public class PeminjamanDAO {
 
     public List<DetailPeminjaman> getDetailByPeminjamanId(int peminjamanId) throws SQLException {
         List<DetailPeminjaman> details = new ArrayList<>();
-        String sql = "SELECT dp.*, b.judul FROM detail_peminjaman dp " +
+        String sql = "SELECT dp.*, b.judul, b.pengarang FROM detail_peminjaman dp " +
                      "JOIN buku b ON dp.buku_id = b.id WHERE dp.peminjaman_id = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -87,6 +87,7 @@ public class PeminjamanDAO {
                     dp.setBukuId(rs.getInt("buku_id"));
                     dp.setDendaPerBuku(rs.getBigDecimal("denda_per_buku"));
                     dp.setJudulBuku(rs.getString("judul"));
+                    dp.setPengarangBuku(rs.getString("pengarang"));
                     details.add(dp);
                 }
             }

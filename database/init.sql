@@ -96,33 +96,34 @@ INSERT INTO users (username, password, nama_lengkap, role, no_telp, is_deleted) 
 ON DUPLICATE KEY UPDATE nama_lengkap=VALUES(nama_lengkap);
 
 INSERT INTO rak (id, kode_rak, nama_rak, lokasi, is_deleted) VALUES
-(1, 'RAK-01', 'Rak Ilmu Komputer & Pemrograman', 'Lantai 1 - Sayap Kiri', 0),
-(2, 'RAK-02', 'Rak Matematika & Sains', 'Lantai 1 - Sayap Kanan', 0),
-(3, 'RAK-03', 'Rak Sastra & Novel', 'Lantai 2 - Zona Santai', 0),
-(4, 'RAK-04', 'Rak Manajemen & Ekonomi', 'Lantai 2 - Sayap Tengah', 0)
-ON DUPLICATE KEY UPDATE nama_rak=VALUES(nama_rak);
+(1, 'RAK-DEF-01', 'Rak Doktrin & Strategi Pertahanan', 'Lantai 1 - Sayap Kanan (Pustaka Utama)', 0),
+(2, 'RAK-CYBER-02', 'Rak Siber, Sandi & Komlek Pertahanan', 'Lantai 1 - Sayap Kiri (Pustaka TIK)', 0),
+(3, 'RAK-HUKUM-03', 'Rak Hukum & Kebijakan Internasional', 'Lantai 2 - Sayap Tengah', 0),
+(4, 'RAK-LOG-04', 'Rak Alutsista & Rantai Pasok Pertahanan', 'Lantai 2 - Ruang Referensi', 0)
+ON DUPLICATE KEY UPDATE nama_rak=VALUES(nama_rak), lokasi=VALUES(lokasi);
 
 INSERT INTO kategori (id, nama_kategori) VALUES
-(1, 'Teknologi Informasi & Komputer'),
-(2, 'Sains & Matematika'),
-(3, 'Sastra & Bahasa'),
-(4, 'Ekonomi & Bisnis'),
-(5, 'Sejarah & Filsafat')
+(1, 'Strategi & Doktrin Pertahanan Semesta'),
+(2, 'Keamanan Siber & Kriptografi Intelijen'),
+(3, 'Hukum Militer & Hukum Humaniter Internasional'),
+(4, 'Manajemen Logistik & Alutsista Pertahanan'),
+(5, 'Geopolitik & Sejarah Kepemimpinan Militer')
 ON DUPLICATE KEY UPDATE nama_kategori=VALUES(nama_kategori);
 
-INSERT INTO buku (judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) VALUES
-('Pemrograman Java Berorientasi Objek', 'Erico Darmawan', 'Informatika', 2023, 1, 1, 5, 5, 0),
-('Algoritma & Struktur Data dengan Java', 'Rinaldi Munir', 'Informatika', 2022, 1, 1, 4, 4, 0),
-('Basis Data Relasional & MySQL', 'Abdul Kadir', 'Andi Offset', 2021, 1, 1, 6, 6, 0),
-('Matematika Diskrit Edisi Revisi', 'Rinaldi Munir', 'Informatika', 2020, 2, 2, 3, 3, 0),
-('Laskar Pelangi', 'Andrea Hirata', 'Bentang Pustaka', 2018, 3, 3, 8, 8, 0),
-('Bumi Manusia', 'Pramoedya Ananta Toer', 'Hasta Mitra', 2019, 3, 3, 5, 5, 0),
-('Manajemen Keuangan Modern', 'Bambang Riyanto', 'BPFE', 2022, 4, 4, 4, 4, 0)
+INSERT INTO buku (id, judul, pengarang, penerbit, tahun_terbit, kategori_id, rak_id, stok_total, stok_tersedia, is_deleted) VALUES
+(1, 'Doktrin Pertahanan Semesta (Bela Negara)', 'Tim Pokja Renhan Kemhan', 'Kementerian Pertahanan RI', 2023, 1, 1, 6, 6, 0),
+(2, 'Keamanan Siber Nasional & Perang Informasi Asimetris', 'Kolonel Inf. Dr. Suryanto', 'Pusdatin Kemhan', 2022, 2, 2, 5, 5, 0),
+(3, 'Geopolitik & Ketahanan Nasional Kawasan Maritim Pasifik', 'Lemhannas RI', 'Lemhannas Press', 2021, 5, 1, 4, 4, 0),
+(4, 'Hukum Humaniter Internasional dalam Operasi Militer Modern', 'Ditjen Strahan Kemhan', 'Balitbang Kemhan', 2020, 3, 3, 5, 5, 0),
+(5, 'Manajemen Logistik & Pemeliharaan Alutsista Pertahanan', 'Marsma TNI Dr. Hendra', 'Pustaka Pertahanan', 2022, 4, 4, 4, 4, 0),
+(6, 'Kepemimpinan Strategis Perwira di Era Disrupsi Teknologi', 'Letjen TNI (Purn) Bambang S.', 'Pustaka Militer', 2023, 5, 1, 5, 5, 0),
+(7, 'Komunikasi Taktis C4ISR & Integrasi Sistem Pertahanan', 'Tim Ahli Pusdatin Kemhan', 'Kemhan RI Press', 2024, 2, 2, 4, 4, 0)
 ON DUPLICATE KEY UPDATE judul=VALUES(judul);
 
-INSERT INTO anggota (nim, nama, jurusan, no_telp, email, status, is_deleted) VALUES
-('2024001', 'Ahmad Fadillah', 'Teknik Informatika', '081111222333', 'ahmad@campus.ac.id', 'aktif', 0),
-('2024002', 'Siti Rahmawati', 'Sistem Informasi', '082222333444', 'siti@campus.ac.id', 'aktif', 0),
-('2024003', 'Dimas Pratama', 'Manajemen', '083333444555', 'dimas@campus.ac.id', 'aktif', 0),
-('2024004', 'Putri Ayu', 'Akuntansi', '084444555666', 'putri@campus.ac.id', 'aktif', 0)
+INSERT INTO anggota (id, nim, nama, jurusan, no_telp, email, status, is_deleted) VALUES
+(1, '198205122008011001', 'Kolonel Inf. Ahmad Fadillah, M.Han.', 'Pusdatin Kemhan', '081111222333', 'ahmad.fadillah@kemhan.go.id', 'aktif', 0),
+(2, '198811202014022002', 'Pembina IV/a Siti Rahmawati, S.Kom., M.T.I.', 'Biro Humas Setjen Kemhan', '082222333444', 'siti.rahmawati@kemhan.go.id', 'aktif', 0),
+(3, '532109', 'Mayor Chb Dimas Pratama, S.T.', 'Ditjen Pothan Kemhan', '083333444555', 'dimas.pratama@kemhan.go.id', 'aktif', 0),
+(4, '199403152019012003', 'Penata Muda III/a Putri Ayu, S.E.', 'Ditjen Renhan Kemhan', '084444555666', 'putri.ayu@kemhan.go.id', 'aktif', 0),
+(5, '197904252006041005', 'Letkol Czi Budi Hartono, S.Sos.', 'Balitbang Kemhan', '085555666777', 'budi.hartono@kemhan.go.id', 'aktif', 0)
 ON DUPLICATE KEY UPDATE nama=VALUES(nama);

@@ -29,8 +29,8 @@ public class DialogPilihAnggota extends JDialog {
     private Anggota selectedAnggota = null;
 
     public DialogPilihAnggota(Window parent) {
-        super(parent, "Cari & Pilih Data Anggota (Peminjam)", ModalityType.APPLICATION_MODAL);
-        setSize(740, 520);
+        super(parent, "Cari & Pilih Data Personel (Peminjam Kemhan RI)", ModalityType.APPLICATION_MODAL);
+        setSize(780, 520);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(UIConstants.BG_LIGHT);
@@ -48,11 +48,11 @@ public class DialogPilihAnggota extends JDialog {
                 BorderFactory.createEmptyBorder(14, 18, 14, 18)
         ));
 
-        JLabel lblTitle = new JLabel("Cari Data Anggota Aktif");
+        JLabel lblTitle = new JLabel("Cari Data Personel Kemhan RI Aktif");
         lblTitle.setFont(UIConstants.FONT_HEADER);
         lblTitle.setForeground(UIConstants.PRIMARY_DARK);
 
-        JLabel lblSubtitle = new JLabel("Pilih anggota yang terdaftar aktif untuk melakukan transaksi peminjaman buku");
+        JLabel lblSubtitle = new JLabel("Pilih personel yang terdaftar aktif untuk melakukan transaksi peminjaman buku kedinasan");
         lblSubtitle.setFont(UIConstants.FONT_SMALL);
         lblSubtitle.setForeground(Color.GRAY);
 
@@ -74,7 +74,7 @@ public class DialogPilihAnggota extends JDialog {
         searchBar.setBackground(Color.WHITE);
         searchBar.setBorder(UIConstants.createCardBorder());
 
-        JLabel lblSearch = new JLabel("Cari (NIM / Nama / Jurusan):");
+        JLabel lblSearch = new JLabel("Cari (NIP/NRP / Nama / Satker):");
         lblSearch.setFont(UIConstants.FONT_BOLD);
         searchBar.add(lblSearch);
 
@@ -89,7 +89,7 @@ public class DialogPilihAnggota extends JDialog {
         centerPanel.add(searchBar, BorderLayout.NORTH);
 
         // Table
-        String[] columns = {"ID", "NIM", "Nama Anggota", "Jurusan / Program Studi", "No. Telepon", "Status"};
+        String[] columns = {"ID", "NIP / NRP", "Nama Personel", "Satuan Kerja (Satker)", "No. Telepon", "Status"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int col) { return false; }

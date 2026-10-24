@@ -140,7 +140,7 @@ public class PanelBeranda extends JPanel {
         tableSwitchContainer.setOpaque(false);
 
         // Table Panel
-        String[] columns = {"Kode Transaksi", "NIM", "Peminjam", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Denda"};
+        String[] columns = {"Kode Transaksi", "NIP / NRP", "Personel", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Denda"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {

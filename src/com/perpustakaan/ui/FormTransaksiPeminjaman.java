@@ -78,7 +78,7 @@ public class FormTransaksiPeminjaman extends JPanel {
 
         // 1. Pilih Anggota
         gbc.gridy = 1; gbc.gridwidth = 1;
-        formCard.add(new JLabel("Pilih Anggota:"), gbc);
+        formCard.add(new JLabel("Pilih Personel Kemhan:"), gbc);
         gbc.gridx = 1;
         JPanel panelPilihAnggota = new JPanel(new BorderLayout(6, 0));
         panelPilihAnggota.setOpaque(false);
@@ -248,10 +248,12 @@ public class FormTransaksiPeminjaman extends JPanel {
                 int tanyaCetak = JOptionPane.showConfirmDialog(this,
                         "Transaksi Peminjaman Berhasil Disimpan!\n\n" +
                         "Kode Transaksi : " + p.getKodeTransaksi() + "\n" +
-                        "Peminjam       : " + anggota.getNama() + " (" + anggota.getNim() + ")\n" +
+                        "Peminjam       : " + anggota.getNama() + " (NIP/NRP: " + anggota.getNim() + ")\n" +
+                        "Satker         : " + anggota.getJurusan() + "\n" +
                         "Jumlah Buku    : " + bukuIds.size() + " buku\n" +
                         "Jatuh Tempo    : " + p.getTanggalJatuhTempo() + "\n\n" +
-                        "Apakah Anda ingin langsung mencetak Bukti Peminjaman (Struk) sekarang?",
+                        "Apakah Anda ingin langsung mencetak Bukti Peminjaman (Struk) sekarang?\n" +
+                        "(Dapat dicetak fisik atau disimpan ke PDF untuk diberikan ke peminjam)",
                         "Transaksi Sukses - Cetak Bukti?", JOptionPane.YES_NO_OPTION);
 
                 if (tanyaCetak == JOptionPane.YES_OPTION) {
@@ -327,13 +329,13 @@ public class FormTransaksiPeminjaman extends JPanel {
             rows.add(new String[]{String.valueOf(no++), b.getJudul(), b.getPengarang()});
         }
 
-        String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Peminjam: " + anggota.getNama() + " (" + anggota.getNim() + ")";
-        String summary = "Tgl Pinjam: " + p.getTanggalPinjam() + "  |  Batas Jatuh Tempo: " + p.getTanggalJatuhTempo() + "  |  Petugas: " + namaPetugas +
-                         "\n* Harap simpan bukti ini dan kembalikan buku tepat waktu. Denda keterlambatan Rp 2.000 / hari / buku.";
+        String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Peminjam: " + anggota.getNama() + " (NIP/NRP: " + anggota.getNim() + " - " + anggota.getJurusan() + ")";
+        String summary = "Tgl Pinjam: " + p.getTanggalPinjam() + "  |  Batas Jatuh Tempo: " + p.getTanggalJatuhTempo() + "  |  Petugas Layanan: " + namaPetugas +
+                         "\n* Tanda terima sah peminjaman buku kedinasan Perpustakaan Kemhan RI. Harap simpan bukti ini dan kembalikan tepat waktu.\n* Ketentuan: Denda keterlambatan Rp 2.000 / hari / buku.";
 
         DialogCetakLaporan dialog = new DialogCetakLaporan(
                 SwingUtilities.getWindowAncestor(this),
-                "BUKTI RESMI TRANSAKSI PEMINJAMAN BUKU",
+                "BUKTI RESMI PEMINJAMAN BUKU PERPUSTAKAAN KEMHAN RI",
                 subJudul,
                 headers, weights, rows, summary, true
         );

@@ -29,12 +29,16 @@ public class Anggota {
 
     public String getNim() { return nim; }
     public void setNim(String nim) { this.nim = nim; }
+    public String getNipNrp() { return nim; }
+    public void setNipNrp(String nipNrp) { this.nim = nipNrp; }
 
     public String getNama() { return nama; }
     public void setNama(String nama) { this.nama = nama; }
 
     public String getJurusan() { return jurusan; }
     public void setJurusan(String jurusan) { this.jurusan = jurusan; }
+    public String getSatker() { return jurusan; }
+    public void setSatker(String satker) { this.jurusan = satker; }
 
     public String getNoTelp() { return noTelp; }
     public void setNoTelp(String noTelp) { this.noTelp = noTelp; }

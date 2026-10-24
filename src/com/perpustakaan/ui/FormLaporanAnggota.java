@@ -47,10 +47,12 @@ public class FormLaporanAnggota extends JPanel {
         btnBar.setOpaque(false);
 
         JButton btnRefresh = UIConstants.createStyledButton("Segarkan", UIConstants.PRIMARY_DARK, Color.WHITE);
+        JButton btnCetakKta = UIConstants.createStyledButton("💳 Cetak Kartu Anggota (Luaran)", new Color(13, 148, 136), Color.WHITE);
         JButton btnCetak = UIConstants.createStyledButton("Cetak Dokumen Formal", UIConstants.PRIMARY_COLOR, Color.WHITE);
         JButton btnExport = UIConstants.createStyledButton("Ekspor ke CSV", UIConstants.ACCENT_GREEN, Color.WHITE);
 
         btnBar.add(btnRefresh);
+        btnBar.add(btnCetakKta);
         btnBar.add(btnCetak);
         btnBar.add(btnExport);
 
@@ -62,7 +64,7 @@ public class FormLaporanAnggota extends JPanel {
         tableCard.setBackground(Color.WHITE);
         tableCard.setBorder(UIConstants.createCardBorder());
 
-        String[] cols = {"No", "NIM", "Nama Anggota", "Jurusan / Prodi", "No. Telepon", "Email", "Status"};
+        String[] cols = {"No", "NIP / NRP", "Nama Personel", "Satuan Kerja (Satker)", "No. Telepon", "Email Dinas", "Status"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -85,7 +87,7 @@ public class FormLaporanAnggota extends JPanel {
         // Bottom Info
         JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomBar.setOpaque(false);
-        lblTotal = new JLabel("Total Anggota: 0 Orang");
+        lblTotal = new JLabel("Total Personel: 0 Orang");
         lblTotal.setFont(UIConstants.FONT_BOLD);
         bottomBar.add(lblTotal);
         tableCard.add(bottomBar, BorderLayout.SOUTH);
@@ -95,12 +97,27 @@ public class FormLaporanAnggota extends JPanel {
         // Actions
         btnRefresh.addActionListener(e -> loadData());
 
-        btnCetak.addActionListener(e -> {
-            if (currentList == null || currentList.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Tidak ada data anggota untuk dicetak!");
+        btnCetakKta.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, 
+                        "Pilih salah satu baris personel pada tabel untuk mencetak Kartu Tanda Anggota (KTA)!", 
+                        "Pilih Personel", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            String[] headers = {"No", "NIM / ID", "Nama Lengkap", "Jurusan / Program Studi", "No. Telepon", "Status"};
+            if (currentList != null && row < currentList.size()) {
+                Anggota a = currentList.get(row);
+                DialogCetakKartuAnggota kta = new DialogCetakKartuAnggota(SwingUtilities.getWindowAncestor(this), a);
+                kta.setVisible(true);
+            }
+        });
+
+        btnCetak.addActionListener(e -> {
+            if (currentList == null || currentList.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data personel untuk dicetak!");
+                return;
+            }
+            String[] headers = {"No", "NIP / NRP", "Nama Personel", "Satker / Divisi", "No. Telepon", "Status"};
             int[] weights = {1, 3, 5, 4, 3, 2};
             List<String[]> rows = new ArrayList<>();
             int no = 1;
@@ -116,11 +133,11 @@ public class FormLaporanAnggota extends JPanel {
                         a.getStatus().toUpperCase()
                 });
             }
-            String summary = "Total Anggota Terdaftar: " + currentList.size() + " Orang  |  Status Aktif: " + aktifCount + " Orang";
+            String summary = "Total Personel Terdaftar: " + currentList.size() + " Orang  |  Status Aktif: " + aktifCount + " Orang";
             DialogCetakLaporan dialog = new DialogCetakLaporan(
                     SwingUtilities.getWindowAncestor(this),
-                    "LAPORAN DATA ANGGOTA PERPUSTAKAAN",
-                    "Rekapitulasi Anggota Aktif & Sivitas Akademika",
+                    "LAPORAN DATA KEANGGOTAAN PERSONEL KEMHAN RI",
+                    "Rekapitulasi Personel Kementerian Pertahanan RI Terdaftar",
                     headers, weights, rows, summary, true
             );
             dialog.setVisible(true);

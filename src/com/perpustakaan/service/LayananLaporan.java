@@ -63,7 +63,7 @@ public class LayananLaporan {
     public void exportLaporanAnggota(File file, List<Anggota> list) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             writer.write('\ufeff');
-            writer.write("No,NIM / ID Anggota,Nama Lengkap,Program Studi / Jurusan,No. Telepon,Email,Status\n");
+            writer.write("No,NIP / NRP,Nama Personel,Satuan Kerja (Satker) / Divisi,No. Telepon,Email Dinas,Status\n");
             int no = 1;
             for (Anggota a : list) {
                 String line = String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
@@ -84,7 +84,7 @@ public class LayananLaporan {
     public void exportLaporanPeminjaman(File file, List<Peminjaman> list) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             writer.write('\ufeff');
-            writer.write("No,Kode Transaksi,NIM,Nama Peminjam,Petugas,Tanggal Pinjam,Jatuh Tempo,Status,Daftar Buku\n");
+            writer.write("No,Kode Transaksi,NIP / NRP,Nama Personel,Petugas,Tanggal Pinjam,Jatuh Tempo,Status,Daftar Buku\n");
             int no = 1;
             for (Peminjaman p : list) {
                 StringBuilder bukuStr = new StringBuilder();
@@ -114,7 +114,7 @@ public class LayananLaporan {
     public void exportLaporanPengembalian(File file, List<Peminjaman> list) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             writer.write('\ufeff');
-            writer.write("No,Kode Transaksi,NIM,Nama Peminjam,Petugas,Tanggal Pinjam,Jatuh Tempo,Tanggal Kembali,Total Denda (Rp),Catatan\n");
+            writer.write("No,Kode Transaksi,NIP / NRP,Nama Personel,Petugas,Tanggal Pinjam,Jatuh Tempo,Tanggal Kembali,Total Denda (Rp),Catatan\n");
             int no = 1;
             for (Peminjaman p : list) {
                 String line = String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",

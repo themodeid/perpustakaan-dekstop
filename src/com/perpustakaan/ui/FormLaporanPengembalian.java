@@ -53,8 +53,10 @@ public class FormLaporanPengembalian extends JPanel {
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btnBar.setOpaque(false);
 
+        JButton btnCetakKuitansi = UIConstants.createStyledButton("🧾 Cetak Kuitansi / Bukti Kembali (Luaran)", new Color(13, 148, 136), Color.WHITE);
         JButton btnCetak = UIConstants.createStyledButton("Cetak Dokumen Formal", UIConstants.PRIMARY_COLOR, Color.WHITE);
         JButton btnExport = UIConstants.createStyledButton("Ekspor ke CSV", UIConstants.ACCENT_GREEN, Color.WHITE);
+        btnBar.add(btnCetakKuitansi);
         btnBar.add(btnCetak);
         btnBar.add(btnExport);
 
@@ -85,7 +87,7 @@ public class FormLaporanPengembalian extends JPanel {
         tableCard.setBackground(Color.WHITE);
         tableCard.setBorder(UIConstants.createCardBorder());
 
-        String[] cols = {"No", "Kode Transaksi", "NIM", "Peminjam", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Tgl Kembali", "Denda", "Catatan"};
+        String[] cols = {"No", "Kode Transaksi", "NIP / NRP", "Personel", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Tgl Kembali", "Denda", "Catatan"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -142,7 +144,7 @@ public class FormLaporanPengembalian extends JPanel {
                 JOptionPane.showMessageDialog(this, "Tidak ada data pengembalian untuk dicetak!");
                 return;
             }
-            String[] headers = {"No", "Kode Transaksi", "NIM", "Nama Peminjam", "Tgl Pinjam", "Tgl Kembali", "Denda (Rp)"};
+            String[] headers = {"No", "Kode Transaksi", "NIP / NRP", "Nama Personel", "Tgl Pinjam", "Tgl Kembali", "Denda (Rp)"};
             int[] weights = {1, 3, 2, 4, 2, 2, 3};
             List<String[]> rows = new ArrayList<>();
             int no = 1;
@@ -167,11 +169,25 @@ public class FormLaporanPengembalian extends JPanel {
             String summary = "Total Pengembalian: " + currentList.size() + " Transaksi  |  Total Penerimaan Kas Denda: " + nf.format(totalDendaSum);
             DialogCetakLaporan dialog = new DialogCetakLaporan(
                     SwingUtilities.getWindowAncestor(this),
-                    "LAPORAN PENGEMBALIAN BUKU & PENERIMAAN KAS DENDA",
+                    "LAPORAN PENGEMBALIAN BUKU PERPUSTAKAAN KEMHAN RI",
                     "Periode: " + periode,
                     headers, weights, rows, summary, true
             );
             dialog.setVisible(true);
+        });
+
+        btnCetakKuitansi.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, 
+                        "Pilih salah satu baris transaksi pengembalian untuk mencetak Kuitansi / Bukti Pengembalian!", 
+                        "Pilih Transaksi", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (currentList != null && row < currentList.size()) {
+                Peminjaman p = currentList.get(row);
+                cetakKuitansiKembali(p);
+            }
         });
 
         btnExport.addActionListener(e -> {
@@ -237,5 +253,49 @@ public class FormLaporanPengembalian extends JPanel {
         } catch (Exception ex) {
             System.err.println("Gagal memuat laporan pengembalian: " + ex.getMessage());
         }
+    }
+
+    private void cetakKuitansiKembali(Peminjaman p) {
+        if (p == null) return;
+        String namaPetugas = p.getNamaPetugas() != null ? p.getNamaPetugas() : "Petugas Layanan Kemhan";
+        BigDecimal denda = p.getTotalDenda() != null ? p.getTotalDenda() : BigDecimal.ZERO;
+        NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        String dendaStr = nf.format(denda);
+
+        boolean adaDenda = denda.compareTo(BigDecimal.ZERO) > 0;
+        String judulDokumen = adaDenda ? 
+                "KUITANSI RESMI PEMBAYARAN DENDA & BUKTI PENGEMBALIAN BUKU" : 
+                "BUKTI RESMI PENGEMBALIAN BUKU PERPUSTAKAAN KEMHAN RI";
+
+        String[] headers = {"No", "Uraian / Judul Koleksi Buku", "Status Pengembalian", "Nominal Denda"};
+        int[] weights = {1, 8, 4, 3};
+        List<String[]> rows = new ArrayList<>();
+        int no = 1;
+        if (p.getDetailList() != null && !p.getDetailList().isEmpty()) {
+            for (int i = 0; i < p.getDetailList().size(); i++) {
+                rows.add(new String[]{
+                        String.valueOf(no++),
+                        p.getDetailList().get(i).getJudulBuku(),
+                        "Diterima Baik (Rak)",
+                        adaDenda ? dendaStr : "Rp 0"
+                });
+            }
+        } else {
+            rows.add(new String[]{"1", "Koleksi Buku Perpustakaan Kemhan", "Diterima Baik", adaDenda ? dendaStr : "Rp 0"});
+        }
+
+        String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Telah Diterima Dari: " + p.getNamaAnggota() + " (NIP/NRP: " + p.getNimAnggota() + ")";
+        String summary = "Tgl Pinjam: " + p.getTanggalPinjam() + "  |  Batas Jatuh Tempo: " + p.getTanggalJatuhTempo() + "  |  Tgl Pengembalian Riil: " + (p.getTanggalKembali() != null ? p.getTanggalKembali() : "-") +
+                         "\nStatus Pelunasan: " + (adaDenda ? "TERLAMBAT — TOTAL DENDA DITERIMA: " + dendaStr + " (LUNAS)" : "TEPAT WAKTU (BEBAS DENDA)") +
+                         "\nPetugas Penerima: " + namaPetugas +
+                         "\n* Dokumen ini merupakan tanda bukti pengembalian dan kuitansi sah pembayaran denda sirkulasi Perpustakaan Kemhan RI.";
+
+        DialogCetakLaporan dialog = new DialogCetakLaporan(
+                SwingUtilities.getWindowAncestor(this),
+                judulDokumen,
+                subJudul,
+                headers, weights, rows, summary, true
+        );
+        dialog.setVisible(true);
     }
 }

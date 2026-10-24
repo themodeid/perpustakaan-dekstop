@@ -10,6 +10,7 @@ public class DetailPeminjaman {
     
     // Informasi tambahan untuk UI/Laporan
     private String judulBuku;
+    private String pengarangBuku;
 
     public DetailPeminjaman() {}
 
@@ -34,4 +35,7 @@ public class DetailPeminjaman {
 
     public String getJudulBuku() { return judulBuku; }
     public void setJudulBuku(String judulBuku) { this.judulBuku = judulBuku; }
+
+    public String getPengarangBuku() { return pengarangBuku; }
+    public void setPengarangBuku(String pengarangBuku) { this.pengarangBuku = pengarangBuku; }
 }

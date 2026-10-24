@@ -50,8 +50,10 @@ public class FormLaporanPeminjaman extends JPanel {
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btnBar.setOpaque(false);
 
+        JButton btnCetakPerOrang = UIConstants.createStyledButton("🧾 Cetak Bukti Pinjam (Luaran Per Orang)", new Color(13, 148, 136), Color.WHITE);
         JButton btnCetak = UIConstants.createStyledButton("Cetak Dokumen Formal", UIConstants.PRIMARY_COLOR, Color.WHITE);
         JButton btnExport = UIConstants.createStyledButton("Ekspor ke CSV", UIConstants.ACCENT_GREEN, Color.WHITE);
+        btnBar.add(btnCetakPerOrang);
         btnBar.add(btnCetak);
         btnBar.add(btnExport);
 
@@ -82,7 +84,7 @@ public class FormLaporanPeminjaman extends JPanel {
         tableCard.setBackground(Color.WHITE);
         tableCard.setBorder(UIConstants.createCardBorder());
 
-        String[] cols = {"No", "Kode Transaksi", "NIM", "Nama Peminjam", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Buku Dipinjam"};
+        String[] cols = {"No", "Kode Transaksi", "NIP / NRP", "Nama Personel", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Buku Dipinjam"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -132,7 +134,7 @@ public class FormLaporanPeminjaman extends JPanel {
                 JOptionPane.showMessageDialog(this, "Tidak ada data peminjaman untuk dicetak!");
                 return;
             }
-            String[] headers = {"No", "Kode Transaksi", "NIM", "Nama Peminjam", "Tgl Pinjam", "Tempo", "Status", "Buku"};
+            String[] headers = {"No", "Kode Transaksi", "NIP / NRP", "Nama Personel", "Tgl Pinjam", "Tempo", "Status", "Buku"};
             int[] weights = {1, 3, 2, 4, 2, 2, 2, 5};
             List<String[]> rows = new ArrayList<>();
             int no = 1;
@@ -160,11 +162,25 @@ public class FormLaporanPeminjaman extends JPanel {
             String summary = "Total Aktivitas Transaksi: " + currentList.size() + " Transaksi";
             DialogCetakLaporan dialog = new DialogCetakLaporan(
                     SwingUtilities.getWindowAncestor(this),
-                    "LAPORAN DATA TRANSAKSI PEMINJAMAN BUKU",
+                    "LAPORAN PEMINJAMAN BUKU PERPUSTAKAAN KEMHAN RI",
                     "Periode: " + periode,
                     headers, weights, rows, summary, true
             );
             dialog.setVisible(true);
+        });
+
+        btnCetakPerOrang.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, 
+                        "Pilih salah satu baris transaksi pada tabel untuk mencetak Bukti Peminjaman (Luaran Per Orang)!", 
+                        "Pilih Transaksi", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (currentList != null && row < currentList.size()) {
+                Peminjaman p = currentList.get(row);
+                cetakBuktiPerOrang(p);
+            }
         });
 
         btnExport.addActionListener(e -> {
@@ -230,5 +246,35 @@ public class FormLaporanPeminjaman extends JPanel {
         } catch (Exception ex) {
             System.err.println("Gagal memuat laporan peminjaman: " + ex.getMessage());
         }
+    }
+
+    private void cetakBuktiPerOrang(Peminjaman p) {
+        if (p == null) return;
+        String namaPetugas = p.getNamaPetugas() != null ? p.getNamaPetugas() : "Petugas Layanan Kemhan";
+
+        String[] headers = {"No", "Judul Koleksi Buku", "Status Peminjaman"};
+        int[] weights = {1, 9, 4};
+        List<String[]> rows = new ArrayList<>();
+        int no = 1;
+        if (p.getDetailList() != null && !p.getDetailList().isEmpty()) {
+            for (int i = 0; i < p.getDetailList().size(); i++) {
+                rows.add(new String[]{String.valueOf(no++), p.getDetailList().get(i).getJudulBuku(), "Dipinjam (Aktif)"});
+            }
+        } else {
+            rows.add(new String[]{"1", "Koleksi Buku Perpustakaan Kemhan", "Dipinjam"});
+        }
+
+        String subJudul = "No. Transaksi: " + p.getKodeTransaksi() + "  |  Personel Peminjam: " + p.getNamaAnggota() + " (NIP/NRP: " + p.getNimAnggota() + ")";
+        String summary = "Tgl Pinjam: " + p.getTanggalPinjam() + "  |  Batas Jatuh Tempo: " + p.getTanggalJatuhTempo() + "  |  Petugas Layanan: " + namaPetugas +
+                         "\n* Tanda terima sah peminjaman buku kedinasan Perpustakaan Kemhan RI. Harap simpan bukti ini dan kembalikan tepat waktu." +
+                         "\n* Ketentuan: Denda keterlambatan pengembalian buku sebesar Rp 2.000 / hari / buku.";
+
+        DialogCetakLaporan dialog = new DialogCetakLaporan(
+                SwingUtilities.getWindowAncestor(this),
+                "BUKTI RESMI PEMINJAMAN BUKU PERPUSTAKAAN KEMHAN RI",
+                subJudul,
+                headers, weights, rows, summary, true
+        );
+        dialog.setVisible(true);
     }
 }
