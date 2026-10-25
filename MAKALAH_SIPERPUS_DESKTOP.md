@@ -242,6 +242,12 @@ Aturan bisnis yang mengikat dan diotomasi dalam sistem SIPerpus Desktop mencakup
    $$\text{Hari Terlambat} = \max(0, \text{Tanggal Kembali} - \text{Tanggal Jatuh Tempo})$$
    $$\text{Denda per Buku} = \text{Hari Terlambat} \times \text{Rp } 2.000,-$$
    $$\text{Total Denda Transaksi} = \sum_{i=1}^{n} \text{Denda per Buku}_{i}$$
+6. **Mekanisme Pengembalian Parsial (*Line-Item Partial Return*) & Argo Denda Bergulir**:
+   Jika seorang personel mengembalikan sebagian buku dari satu nomor transaksi (misal: meminjam 3 buku, namun baru mengembalikan 2 buku karena 1 buku belum selesai dibaca):
+   * Stok buku yang diserahkan langsung dipulihkan ke rak fisik ($+1$), dan denda keterlambatannya dilunasi hari itu juga.
+   * Buku yang belum kembali tetap tercatat sebagai tanggungan aktif personel dengan status transaksi induk `kembali_sebagian`.
+   * Argo denda keterlambatan untuk buku yang belum diserahkan **tetap berjalan (+Rp 2.000/hari)** hingga buku fisik diserahkan ke meja sirkulasi.
+   * Sistem mencetak struk bukti pengembalian parsial yang merinci buku yang sudah lunas dan buku yang masih menjadi tanggungan dinas.
 
 ---
 
@@ -871,6 +877,9 @@ Pengujian sistem dilakukan menggunakan metode pengujian kotak hitam (*Black-Box 
 | 10| **Pemulihan Stok Kembali** | Transaksi pengembalian buku diproses | Atribut `stok_tersedia` buku bertambah kembali 1 unit ke rak | Stok buku bertambah akurat dari 4 menjadi 5 | 🟢 Lulus |
 | 11| **Ekspor Berkas CSV** | Menekan tombol ekspor pada tabel Laporan Buku | Sistem menghasilkan berkas `.csv` yang dapat dibuka di MS Excel | Berkas CSV ter-generate rapi sesuai kolom | 🟢 Lulus |
 | 12| **Pratinjau Cetak Dokumen** | Menekan tombol Cetak A4 pada Laporan Pengembalian | Muncul dialog pratinjau lengkap dengan kop surat dan tanda tangan | Dialog muncul presisi tanpa stretching visual | 🟢 Lulus |
+| 13| **Pengembalian Parsial** | Memilih 2 dari 3 buku yang dipinjam saat telat 3 hari | Stok 2 buku kembali (+1), denda Rp 12.000 lunas, status peminjaman menjadi 'kembali_sebagian' | Stok terestok, 1 buku sisa denda jalan, status partial | 🟢 Lulus |
+| 14| **Penerbitan KTA Kemhan RI** | Menekan tombol cetak KTA pada menu Master Anggota | Jendela dialog KTA muncul lengkap dengan barcode, foto, dan tombol ekspor PDF | KTA terbit presisi siap cetak/kirim WA | 🟢 Lulus |
+| 15| **Struk Bukti Peminjaman** | Transaksi pinjam baru sukses diproses | Muncul dialog konfirmasi cetak struk dinas ber-Kop Kemhan RI | Struk tercetak rapi dengan blok tanda tangan | 🟢 Lulus |
 
 ---
 
