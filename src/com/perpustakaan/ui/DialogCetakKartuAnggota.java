@@ -86,10 +86,29 @@ public class DialogCetakKartuAnggota extends JDialog implements Printable {
     private void bangunTampilanKartu() {
         kartuPanel.removeAll();
 
-        // A. HEADER KARTU (Kop Resmi Kemhan RI)
+        // A. HEADER KARTU (Kop Resmi Kemhan RI dengan Logo)
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setOpaque(false);
+
+        JPanel kopRow = new JPanel(new BorderLayout(8, 0));
+        kopRow.setOpaque(false);
+
+        ImageIcon logoKta = UIConstants.loadLogoKemhanIcon(44, 44);
+        if (logoKta != null) {
+            JLabel lblLogoKta = new JLabel(logoKta);
+            lblLogoKta.setVerticalAlignment(SwingConstants.CENTER);
+            kopRow.add(lblLogoKta, BorderLayout.WEST);
+
+            JPanel spacer = new JPanel();
+            spacer.setOpaque(false);
+            spacer.setPreferredSize(new Dimension(44, 44));
+            kopRow.add(spacer, BorderLayout.EAST);
+        }
+
+        JPanel kopText = new JPanel();
+        kopText.setLayout(new BoxLayout(kopText, BoxLayout.Y_AXIS));
+        kopText.setOpaque(false);
 
         JLabel lblInstansi1 = new JLabel("KEMENTERIAN PERTAHANAN REPUBLIK INDONESIA", SwingConstants.CENTER);
         lblInstansi1.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -106,11 +125,14 @@ public class DialogCetakKartuAnggota extends JDialog implements Printable {
         lblAlamat.setForeground(new Color(100, 116, 139));
         lblAlamat.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        headerPanel.add(lblInstansi1);
-        headerPanel.add(Box.createVerticalStrut(2));
-        headerPanel.add(lblInstansi2);
-        headerPanel.add(Box.createVerticalStrut(2));
-        headerPanel.add(lblAlamat);
+        kopText.add(lblInstansi1);
+        kopText.add(Box.createVerticalStrut(2));
+        kopText.add(lblInstansi2);
+        kopText.add(Box.createVerticalStrut(2));
+        kopText.add(lblAlamat);
+
+        kopRow.add(kopText, BorderLayout.CENTER);
+        headerPanel.add(kopRow);
         headerPanel.add(Box.createVerticalStrut(6));
 
         // Garis Pembatas Emas / Navy

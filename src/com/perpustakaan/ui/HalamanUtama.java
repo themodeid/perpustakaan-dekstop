@@ -41,6 +41,11 @@ public class HalamanUtama extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        Image appIcon = UIConstants.loadLogoKemhanImage();
+        if (appIcon != null) {
+            setIconImage(appIcon);
+        }
+
         // Auto-Login Default Petugas / Operator untuk pengalaman kerja zero-friction
         ensureOperatorLoggedIn();
 
@@ -74,6 +79,14 @@ public class HalamanUtama extends JFrame {
                 BorderFactory.createEmptyBorder(10, 22, 10, 22)
         ));
 
+        JPanel brandWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        brandWrapper.setOpaque(false);
+
+        ImageIcon headerLogo = UIConstants.loadLogoKemhanIcon(42, 42);
+        if (headerLogo != null) {
+            brandWrapper.add(new JLabel(headerLogo));
+        }
+
         JPanel brandPanel = new JPanel(new GridLayout(2, 1, 0, 2));
         brandPanel.setOpaque(false);
 
@@ -87,6 +100,7 @@ public class HalamanUtama extends JFrame {
 
         brandPanel.add(lblBrand);
         brandPanel.add(lblSubBrand);
+        brandWrapper.add(brandPanel);
 
         JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         userInfoPanel.setOpaque(false);
@@ -103,7 +117,7 @@ public class HalamanUtama extends JFrame {
         userInfoPanel.add(lblUser);
         userInfoPanel.add(btnAuthAction);
 
-        headerPanel.add(brandPanel, BorderLayout.WEST);
+        headerPanel.add(brandWrapper, BorderLayout.WEST);
         headerPanel.add(userInfoPanel, BorderLayout.EAST);
         rootPanel.add(headerPanel, BorderLayout.NORTH);
 

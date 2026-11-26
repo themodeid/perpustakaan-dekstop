@@ -147,6 +147,31 @@ def build_docx(md_path, docx_path):
         if not stripped:
             continue
 
+        # Handle Markdown images: ![Caption](relative/path)
+        img_match = re.match(r'^!\[(.*?)\]\((.*?)\)$', stripped)
+        if img_match:
+            caption = img_match.group(1).strip()
+            rel_img = img_match.group(2).strip()
+            img_full = os.path.join(os.path.dirname(md_path), rel_img)
+            if os.path.exists(img_full):
+                p_img = doc.add_paragraph()
+                p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p_img.paragraph_format.space_before = Pt(6)
+                p_img.paragraph_format.space_after = Pt(2)
+                run_img = p_img.add_run()
+                width_cm = Cm(4.2) if "logo" in rel_img.lower() else Cm(13.5)
+                run_img.add_picture(img_full, width=width_cm)
+                if caption:
+                    p_cap = doc.add_paragraph()
+                    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p_cap.paragraph_format.space_before = Pt(0)
+                    p_cap.paragraph_format.space_after = Pt(8)
+                    r_cap = p_cap.add_run(caption)
+                    r_cap.font.name = 'Times New Roman'
+                    r_cap.font.size = Pt(10)
+                    r_cap.font.italic = True
+            continue
+
         # Headings
         if stripped.startswith('# '):
             text = stripped[2:].strip()
