@@ -289,7 +289,7 @@ public class PanelBeranda extends JPanel {
         policyRows.add(createPolicyRow("Durasi Peminjaman", "7 Hari Kalender"));
         policyRows.add(createPolicyRow("Batas Maksimal Pinjam", "3 Buku / Anggota"));
         policyRows.add(createPolicyRow("Tarif Denda Keterlambatan", "Rp 2.000 / Hari"));
-        policyRows.add(createPolicyRow("Lokasi Instansi", "Kemenhan RI (Jakarta Pusat)"));
+        policyRows.add(createPolicyRow("Lokasi Instansi", "Kemhan RI (Jakarta Pusat)"));
         policyRows.add(createPolicyRow("Status Database", "MySQL 8.0 (Terhubung)"));
 
         policyCard.add(policyRows, BorderLayout.CENTER);

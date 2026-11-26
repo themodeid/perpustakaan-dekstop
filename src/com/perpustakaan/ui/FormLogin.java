@@ -34,20 +34,32 @@ public class FormLogin extends JDialog {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(UIConstants.BG_LIGHT);
 
-        // Header Panel (Logo & Title)
-        JPanel headerPanel = new JPanel(new GridLayout(2, 1, 4, 4));
+        // Header Panel (Logo Resmi Kemhan RI & Title)
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setBackground(UIConstants.PRIMARY_COLOR);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(25, 20, 25, 20));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        ImageIcon logoLogin = UIConstants.loadLogoKemhanIcon(56, 56);
+        if (logoLogin != null) {
+            JLabel lblLogo = new JLabel(logoLogin);
+            lblLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            headerPanel.add(lblLogo);
+            headerPanel.add(Box.createVerticalStrut(8));
+        }
 
         JLabel lblTitle = new JLabel("SIPerpus Desktop", SwingConstants.CENTER);
         lblTitle.setFont(UIConstants.FONT_TITLE);
         lblTitle.setForeground(Color.WHITE);
+        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblSub = new JLabel("Sistem Informasi Manajemen Perpustakaan", SwingConstants.CENTER);
+        JLabel lblSub = new JLabel("Perpustakaan Kementerian Pertahanan RI", SwingConstants.CENTER);
         lblSub.setFont(UIConstants.FONT_REGULAR);
         lblSub.setForeground(new Color(225, 238, 255));
+        lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         headerPanel.add(lblTitle);
+        headerPanel.add(Box.createVerticalStrut(2));
         headerPanel.add(lblSub);
 
         // Form Card Panel

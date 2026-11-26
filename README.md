@@ -1,6 +1,6 @@
-# 📚 SIPerpus Desktop (Java Swing Modern & MySQL Docker)
+# 📚 SIPerpus Desktop — Perpustakaan Kementerian Pertahanan RI (KKP UNINDRA)
 
-Aplikasi Desktop Sistem Informasi Manajemen Perpustakaan berbasis **Java Swing (Pure Code)** dengan tema modern **FlatLaf** dan database **MySQL 8** yang dijalankan melalui **Docker Compose**.
+Aplikasi Desktop Sistem Informasi Manajemen Perpustakaan untuk **Perpustakaan Kementerian Pertahanan Republik Indonesia (Kemhan RI)** berbasis **Java Swing (Pure Code)** dengan tema modern **FlatLaf** dan database **MySQL 8** yang dijalankan melalui **Docker Compose**.
 
 Aplikasi ini dirancang bersih (tanpa *auto-generated drag-and-drop code* NetBeans yang rumit) sehingga mudah dibaca, dimodifikasi, dan dipelajari konsep Object-Oriented Programming (OOP) serta arsitektur berlapis (MVC/DAO).
 
@@ -9,7 +9,8 @@ Aplikasi ini dirancang bersih (tanpa *auto-generated drag-and-drop code* NetBean
 ## 📁 Struktur Direktori & Arsitektur
 
 ```text
-perpustakaan-desktop/
+kkp-perpustakaan-desktop/
+├── assets/                       # Aset resmi Kemhan RI (Logo, Sejarah, Struktur Organisasi)
 ├── bin/                          # File bytecode .class hasil kompilasi
 ├── database/
 │   └── init.sql                  # Skema database (DDL) & seeder data awal
@@ -61,9 +62,9 @@ perpustakaan-desktop/
 
 ### Langkah 1: Pastikan Docker Desktop Menyala & Jalankan MySQL
 1. Buka aplikasi **Docker Desktop** di Windows Anda (dari Start Menu).
-2. Buka terminal (PowerShell atau Command Prompt) di folder `perpustakaan-desktop`:
+2. Buka terminal (PowerShell atau Command Prompt) di folder `kkp-perpustakaan-desktop`:
    ```powershell
-   cd c:\A_main_code\all-my-projek\perpustakaan\perpustakaan-desktop
+   cd c:\A_main_code\all-my-projek\kkp-perpustakaan-desktop
    docker compose up -d
    ```
    *Database `perpustakaan_db` beserta tabel dan data sample otomatis dibuat dari file `database/init.sql`.*
@@ -91,7 +92,7 @@ Cukup jalankan file **`run.bat`**:
 
 ### 📁 FORM MASTER
 1. **Data Buku**: Input, edit, hapus, dan pencarian judul, pengarang, penerbit, tahun, kategori, serta pemilihan lokasi Rak Buku.
-2. **Data Anggota**: Pendaftaran anggota, NIM, nama, jurusan, no. telepon, email, dan status aktif/nonaktif.
+2. **Data Anggota (Personel Kemhan RI)**: Pendaftaran personel, NIP / NRP, nama, Satuan Kerja (Satker) / Divisi, no. telepon, email dinas (`@kemhan.go.id`), status aktif/nonaktif, serta cetak **Kartu Tanda Anggota (KTA)** ber-Kop & Logo Kemhan RI.
 3. **Data Petugas**: Manajemen akun admin & petugas perpustakaan (khusus role Admin).
 4. **Rak Buku**: Master penataan lokasi fisik buku (Kode Rak, Nama Rak, Lokasi / Lantai).
 
@@ -111,9 +112,11 @@ Cukup jalankan file **`run.bat`**:
 
 Aplikasi ini dilengkapi fitur **Database Migration Otomatis** layaknya framework modern:
 - Seluruh perubahan skema dan data awal disimpan dalam folder:
-  `perpustakaan-desktop/database/migrations/`
+  `kkp-perpustakaan-desktop/database/migrations/`
   - `V1__init_schema.sql` (Struktur dasar tabel)
   - `V2__add_rak_table_and_soft_delete.sql` (Tabel rak & penambahan kolom soft delete)
   - `V3__seed_initial_data.sql` (Data awal buku, anggota, petugas, rak, kategori)
+  - `V4__drop_isbn_column.sql` (Penghapusan kolom ISBN sesuai spesifikasi)
+  - `V5__adapt_to_kemhan_ri.sql` (Penyelarasan data personel, Satker, & koleksi pustaka Kemhan RI)
 - Saat aplikasi dijalankan, sistem secara otomatis mengecek tabel `schema_migrations` di MySQL. File migrasi yang baru akan langsung diaplikasikan tanpa menghapus data yang sudah ada!
 - Jika ingin menjalankan migrasi secara mandiri, cukup dobel-klik file **`migrate.bat`**.

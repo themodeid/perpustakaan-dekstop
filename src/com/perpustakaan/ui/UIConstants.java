@@ -2,7 +2,11 @@ package com.perpustakaan.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 
@@ -42,5 +46,39 @@ public class UIConstants {
                 BorderFactory.createLineBorder(new Color(225, 230, 238), 1),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         );
+    }
+
+    public static Image loadLogoKemhanImage() {
+        String[] candidatePaths = {
+                "assets/logo-kemhan.png",
+                "kkp-perpustakaan-desktop/assets/logo-kemhan.png",
+                "perpustakaan-desktop/assets/logo-kemhan.png"
+        };
+        for (String path : candidatePaths) {
+            File file = new File(path);
+            if (file.exists()) {
+                try {
+                    return ImageIO.read(file);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        try {
+            var resourceUrl = UIConstants.class.getResource("/assets/logo-kemhan.png");
+            if (resourceUrl != null) {
+                return ImageIO.read(resourceUrl);
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    public static ImageIcon loadLogoKemhanIcon(int width, int height) {
+        Image img = loadLogoKemhanImage();
+        if (img == null) {
+            return null;
+        }
+        Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaled);
     }
 }

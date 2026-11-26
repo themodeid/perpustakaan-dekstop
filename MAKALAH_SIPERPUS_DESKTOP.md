@@ -14,7 +14,7 @@
 * **Adam Wahyu Kurniawan** (NPM: 202343500510) — *Lead Software Engineer / System Architect*
 * **Tim Kolaborasi KKP SQUAD UNINDRA** (Adam Wahyu Kurniawan, Rafli Apriadi, Kartika Arista Fatni, Yogi Pradana, Devita Nurcahyati, Adi Saputro)
 
-**Lokasi Repositori**: `c:\A_main_code\all-my-projek\perpustakaan-desktop\`  
+**Lokasi Repositori**: `c:\A_main_code\all-my-projek\kkp-perpustakaan-desktop\`  
 **Tahun Akademik**: 2026/2027
 
 ---
@@ -40,17 +40,22 @@
    * 2.7 [Kontainerisasi Lingkungan Basis Data via Docker Compose](#27-kontainerisasi-lingkungan-basis-data-via-docker-compose)
    * 2.8 [Prinsip Integritas Data & Soft Delete](#28-prinsip-integritas-data--soft-delete)
 4. [BAB III — ANALISIS DAN PERANCANGAN SISTEM](#bab-iii--analisis-dan-perancangan-sistem)
-   * 3.1 [Analisis Kebutuhan Sistem (FR & NFR)](#31-analisis-kebutuhan-sistem-fr--nfr)
-   * 3.2 [Analisis Aturan Bisnis Sirkulasi Perpustakaan](#32-analisis-aturan-bisnis-sirkulasi-perpustakaan)
-   * 3.3 [Pemodelan Sistem Menggunakan UML (Unified Modeling Language)](#33-pemodelan-sistem-menggunakan-uml-unified-modeling-language)
-     * 3.3.1 [Use Case Diagram & Matriks Akses Peran](#331-use-case-diagram--matriks-akses-peran)
-     * 3.3.2 [Activity Diagram Peminjaman Buku](#332-activity-diagram-peminjaman-buku)
-     * 3.3.3 [Activity Diagram Pengembalian Buku & Perhitungan Denda](#333-activity-diagram-pengembalian-buku--perhitungan-denda)
-     * 3.3.4 [Class Diagram Arsitektur Sistem](#334-class-diagram-arsitektur-sistem)
-   * 3.4 [Perancangan Basis Data (Database Design)](#34-perancangan-basis-data-database-design)
-     * 3.4.1 [Entity Relationship Diagram (ERD)](#341-entity-relationship-diagram-erd)
-     * 3.4.2 [Kamus Data Fisik (7 Tabel Relasional)](#342-kamus-data-fisik-7-tabel-relasional)
-   * 3.5 [Perancangan Antarmuka Pengguna (User Interface)](#35-perancangan-antarmuka-pengguna-user-interface)
+   * 3.1 [Gambaran Umum Instansi (Kementerian Pertahanan RI)](#31-gambaran-umum-instansi-kementerian-pertahanan-ri)
+     * 3.1.1 [Sejarah Singkat Kementerian Pertahanan RI](#311-sejarah-singkat-kementerian-pertahanan-ri)
+     * 3.1.2 [Visi dan Misi Kementerian Pertahanan RI](#312-visi-dan-misi-kementerian-pertahanan-ri)
+     * 3.1.3 [Logo Resmi Kementerian Pertahanan RI](#313-logo-resmi-kementerian-pertahanan-ri)
+     * 3.1.4 [Struktur Organisasi Kementerian Pertahanan RI](#314-struktur-organisasi-kementerian-pertahanan-ri)
+   * 3.2 [Analisis Kebutuhan Sistem (FR & NFR)](#32-analisis-kebutuhan-sistem-fr--nfr)
+   * 3.3 [Analisis Aturan Bisnis Sirkulasi Perpustakaan](#33-analisis-aturan-bisnis-sirkulasi-perpustakaan)
+   * 3.4 [Pemodelan Sistem Menggunakan UML (Unified Modeling Language)](#34-pemodelan-sistem-menggunakan-uml-unified-modeling-language)
+     * 3.4.1 [Use Case Diagram & Matriks Akses Peran](#341-use-case-diagram--matriks-akses-peran)
+     * 3.4.2 [Activity Diagram Peminjaman Buku](#342-activity-diagram-peminjaman-buku)
+     * 3.4.3 [Activity Diagram Pengembalian Buku & Perhitungan Denda](#343-activity-diagram-pengembalian-buku--perhitungan-denda)
+     * 3.4.4 [Class Diagram Arsitektur Sistem](#344-class-diagram-arsitektur-sistem)
+   * 3.5 [Perancangan Basis Data (Database Design)](#35-perancangan-basis-data-database-design)
+     * 3.5.1 [Entity Relationship Diagram (ERD)](#351-entity-relationship-diagram-erd)
+     * 3.5.2 [Kamus Data Fisik (7 Tabel Relasional)](#352-kamus-data-fisik-7-tabel-relasional)
+   * 3.6 [Perancangan Antarmuka Pengguna (User Interface)](#36-perancangan-antarmuka-pengguna-user-interface)
 5. [BAB IV — IMPLEMENTASI DAN PENGUJIAN SISTEM](#bab-iv--implementasi-dan-pengujian-sistem)
    * 4.1 [Lingkungan Implementasi (Hardware & Software)](#41-lingkungan-implementasi-hardware--software)
    * 4.2 [Struktur Proyek & Organisasi Package](#42-struktur-proyek--organisasi-package)
@@ -74,7 +79,7 @@
 
 Puji dan syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas berkat, rahmat, dan karunia-Nya, sehingga makalah akademik dan laporan rekayasa perangkat lunak yang berjudul **"Pengembangan Sistem Informasi Manajemen Perpustakaan Berbasis Desktop Menggunakan Java Swing, FlatLaf, dan MySQL (SIPerpus Desktop)"** ini dapat diselesaikan dengan tuntas dan sistematis.
 
-Makalah ini disusun untuk memenuhi salah satu syarat pemenuhan nilai akademik pada mata kuliah Rekayasa Perangkat Lunak dan Pemrograman Visual di Program Studi Teknik Informatika, Fakultas Teknik dan Ilmu Komputer (FTIK), Universitas Indraprasta PGRI (UNINDRA) Jakarta. Selain itu, dokumen ini dirancang sebagai landasan arsitektur teknis bagi implementasi sistem informasi sirkulasi buku pada lingkungan institusi pendidikan maupun instansi formal (seperti Perpustakaan Kementerian Pertahanan Republik Indonesia).
+Makalah ini disusun untuk memenuhi salah satu syarat pemenuhan nilai akademik pada mata kuliah Kuliah Kerja Praktik (KKP) di Program Studi Teknik Informatika, Fakultas Teknik dan Ilmu Komputer (FTIK), Universitas Indraprasta PGRI (UNINDRA) Jakarta. Selain itu, dokumen ini dirancang sebagai landasan arsitektur teknis bagi implementasi sistem informasi sirkulasi buku pada **Perpustakaan Kementerian Pertahanan Republik Indonesia (Kemhan RI)**.
 
 Dalam proses perancangan hingga implementasi perangkat lunak ini, penulis mengadopsi standar rekayasa perangkat lunak modern dengan pendekatan kode murni (*pure Java Swing code*), arsitektur berlapis *Model-View-Controller* (MVC), pemisahan logika akses data via *Data Access Object* (DAO), modernisasi antarmuka melalui *FlatLaf Dark Theme*, serta orkestrasi basis data relasional MySQL 8 berbasis kontainer Docker.
 
@@ -209,9 +214,58 @@ Seluruh query seleksi data aktif pada antarmuka master maupun transaksi peminjam
 
 ## BAB III — ANALISIS DAN PERANCANGAN SISTEM
 
-### 3.1 Analisis Kebutuhan Sistem (FR & NFR)
+### 3.1 Gambaran Umum Instansi (Kementerian Pertahanan RI)
 
-#### 3.1.1 Kebutuhan Fungsional (*Functional Requirements* / FR)
+#### 3.1.1 Sejarah Singkat Kementerian Pertahanan RI
+Keberadaan Kementerian Pertahanan dimulai sejak Panitia Persiapan Kemerdekaan Indonesia (PPKI) pada tanggal **19 Agustus 1945** menetapkan 12 Departemen. Salah satu Departemen tersebut adalah Departemen Pertahanan sebagai bagian dari Kabinet Presidensial pada saat itu. Selanjutnya pada bulan Oktober 1945 di saat Departemen Pertahanan belum berjalan sebagaimana mestinya, dibentuklah **Kementerian Keamanan Rakyat** sebagai pengganti Departemen Pertahanan. Kementerian Keamanan Rakyat tersebut menjalankan fungsi pertahanan negara. Kemudian sejak tahun 1962 hingga akhir masa pemerintahan Presiden Soekarno, fungsi pertahanan negara berada di bawah **Kementerian Pertahanan Keamanan**.
+
+Pada awal masa pemerintahan Orde Baru (Kabinet Pembangunan / tahun 1968), fungsi pertahanan dikendalikan langsung oleh Presiden yang juga merangkap sebagai Menteri Pertahanan/Keamanan. Hal ini berlangsung sampai tahun 1973. Pada era Kabinet Pembangunan II dan selanjutnya, fungsi pertahanan negara selalu disatukan dengan fungsi keamanan dan berada di bawah **Departemen Pertahanan Keamanan**. Menteri Pertahanan Keamanan sekaligus merangkap Panglima ABRI. Setelah reformasi, dikeluarkan **TAP MPR VI/2000** tentang pemisahan TNI/POLRI sehingga fungsi pertahanan dan keamanan dipisahkan.
+
+Sejak saat itu fungsi yang mengatur penyelenggaraan pertahanan negara berada di bawah **Departemen Pertahanan**. Pada tahun 2008 pemerintah mengeluarkan **Undang-Undang Nomor 39 Tahun 2008** tentang Kementerian Negara yang diperkuat dengan **Peraturan Presiden Nomor 47 Tahun 2009** tanggal 5 November 2009 tentang Pembentukan dan Organisasi Kementerian Negara. Kemudian pada tanggal **14 April 2010**, Presiden mengeluarkan **Peraturan Presiden Nomor 24 Tahun 2010** yang berisi kedudukan, tugas, dan fungsi Kementerian Pertahanan. Dengan Perpres tersebut, penyebutan Departemen Pertahanan diubah menjadi **Kementerian Pertahanan** yang berlaku sampai dengan saat ini (beralamat di Jl. Medan Merdeka Barat No. 13–14, Jakarta Pusat).
+
+#### 3.1.2 Visi dan Misi Kementerian Pertahanan RI
+**Visi:**
+> *"Terwujudnya Indonesia yang berdaulat, mandiri dan berkepribadian berlandaskan gotong royong."*
+
+**Misi:**
+1. Mewujudkan keamanan nasional yang mampu menjaga kedaulatan wilayah, menopang kemandirian ekonomi dengan mengamankan sumberdaya maritim, dan mencerminkan kepribadian Indonesia sebagai negara kepulauan.
+2. Mewujudkan masyarakat maju, berkesinambungan dan demokratis berlandaskan negara hukum.
+3. Mewujudkan politik luar negeri bebas-aktif dan memperkuat jati diri sebagai negara maritim.
+4. Mewujudkan kualitas hidup manusia Indonesia yang tinggi, maju dan sejahtera.
+5. Mewujudkan bangsa yang berdaya-saing.
+6. Mewujudkan Indonesia menjadi negara maritim yang mandiri, maju, kuat dan berbasiskan kepentingan nasional.
+7. Mewujudkan masyarakat yang berkepribadian dalam kebudayaan.
+
+#### 3.1.3 Logo Resmi Kementerian Pertahanan RI
+![Logo Resmi Kementerian Pertahanan Republik Indonesia](assets/logo-kemhan.png)
+
+Logo resmi Kementerian Pertahanan Republik Indonesia menampilkan burung Garuda Pancasila di tengah lingkaran rantai emas berlatar merah marun dengan tulisan *"KEMENTERIAN PERTAHANAN REPUBLIK INDONESIA"* yang melambangkan keteguhan menjaga kedaulatan, persatuan, dan keutuhan Negara Kesatuan Republik Indonesia. Logo ini diintegrasikan secara langsung ke dalam antarmuka aplikasi SIPerpus Desktop (ikon jendela, header utama, halaman login, kop surat laporan A4, serta Kartu Tanda Anggota/KTA).
+
+#### 3.1.4 Struktur Organisasi Kementerian Pertahanan RI
+![Struktur Organisasi Kementerian Pertahanan Republik Indonesia](assets/struktur-organisasi-kemhan.jpg)
+
+Susunan pimpinan dan pejabat Eselon I Kementerian Pertahanan Republik Indonesia adalah sebagai berikut:
+
+| No | Jabatan | Pejabat |
+|:---:|---|---|
+| 1 | Menteri Pertahanan | Sjafrie Sjamsoeddin |
+| 2 | Wakil Menteri Pertahanan | Donny Ermawan Taufanto |
+| 3 | Inspektur Jenderal Kementerian Pertahanan | Rui Fernandes Guedes P.D. |
+| 4 | Sekretaris Jenderal Kementerian Pertahanan | Tri Budi Utomo, S.E. |
+| 5 | Kepala Pusat Pelaporan dan Pembinaan Keuangan Pertahanan | Delvi, S.I.P., M.Si., CFrA. |
+| 6 | Direktur Jenderal Potensi Pertahanan | Piek Budyakto |
+| 7 | Direktur Jenderal Perencanaan Pertahanan | Supo Dwi Diantara, S.T., M.Tr.Opsla., IPU., M.A., M.S.P., APEC Eng. |
+| 8 | Direktur Jenderal Kekuatan Pertahanan | H. Haris Haryanto, S.I.P. |
+| 9 | Kepala Badan Pendidikan dan Pelatihan | Zainul Arifin, S.AP., M.Sc. |
+| 10 | Kepala Pusat Data dan Informasi | Rionardo |
+| 11 | Kepala Pusat Kelaikan | Nono Suwarno, M.Si. |
+| 12 | Kepala Badan Penelitian dan Pengembangan | Heru Sudarminto, S.I.P., M.Sc. |
+| 13 | Kepala Badan Sarana Pertahanan | Yusuf Jauhari, M.Eng. |
+| 14 | Kepala Badan Instalasi Strategis Pertahanan | Robi Hermawan |
+
+### 3.2 Analisis Kebutuhan Sistem (FR & NFR)
+
+#### 3.2.1 Kebutuhan Fungsional (*Functional Requirements* / FR)
 Kebutuhan fungsional mendefinisikan kapabilitas dan layanan spesifik yang wajib disediakan oleh sistem:
 1. **FR-01 (Autentikasi & Otorisasi RBAC)**: Sistem harus mampu memvalidasi kredensial pengguna (username dan password) serta mengatur hak akses menu berdasarkan peran (Administrator atau Petugas).
 2. **FR-02 (Manajemen Data Master Buku)**: Sistem harus mampu melakukan operasi Create, Read, Update, dan Soft Delete untuk data buku lengkap dengan atribut judul, pengarang, penerbit, tahun terbit, kategori, penempatan rak, dan stok fisik.
@@ -224,14 +278,14 @@ Kebutuhan fungsional mendefinisikan kapabilitas dan layanan spesifik yang wajib 
 9. **FR-09 (Penerbitan Kartu Tanda Anggota / KTA Digital & Cetak)**: Sistem harus mampu menerbitkan Kartu Tanda Anggota (KTA) resmi ber-Kop Kemhan RI yang dapat dicetak fisik maupun disimpan sebagai berkas PDF untuk dibagikan kepada personel melalui WhatsApp atau Email.
 10. **FR-10 (Penerbitan Struk Bukti Peminjaman & Pengembalian)**: Sistem harus menyediakan lembar tanda terima/struk transaksi sirkulasi resmi ber-Kop Kemhan RI untuk diserahkan kepada personel peminjam dan diarsipkan oleh petugas.
 
-#### 3.1.2 Kebutuhan Non-Fungsional (*Non-Functional Requirements* / NFR)
+#### 3.2.2 Kebutuhan Non-Fungsional (*Non-Functional Requirements* / NFR)
 Kebutuhan non-fungsional mendefinisikan batasan kualitas dan kinerja operasional sistem:
 1. **NFR-01 (Usability / Kemudahan Penggunaan)**: Antarmuka mengadopsi standar modern FlatLaf Dark Mode dengan palet kontras tinggi, navigasi sidebar 12 menu yang persisten, dan tombol pintas aksi cepat (*Quick Action Hub*) di beranda.
 2. **NFR-02 (Reliability / Keandalan)**: Seluruh transaksi sirkulasi dilindungi mekanisme transaksi basis data ACID (`setAutoCommit(false)` dan `commit()`), menjamin ketiadaan mutasi stok gantung jika salah satu operasi detail gagal.
 3. **NFR-03 (Performance / Kecepatan Tanggap)**: Waktu tanggap eksekusi pencarian buku dan anggota (*live filtering dialog*) tidak melebihi 200 milidetik pada beban data hingga 10.000 catatan pustaka.
 4. **NFR-04 (Maintainability / Kemudahan Pemeliharaan)**: Struktur kode murni berbasis package modular tanpa ketergantungan pada pustaka *form builder* eksternal yang sulit dimigrasikan.
 
-### 3.2 Analisis Aturan Bisnis Sirkulasi Perpustakaan
+### 3.3 Analisis Aturan Bisnis Sirkulasi Perpustakaan
 Aturan bisnis yang mengikat dan diotomasi dalam sistem SIPerpus Desktop mencakup:
 1. **Durasi Peminjaman Baku**: Masa peminjaman standar ditetapkan selama **7 hari kalender**. Formula penentuan tanggal jatuh tempo adalah:
    $$\text{Tanggal Jatuh Tempo} = \text{Tanggal Pinjam} + 7 \text{ Hari}$$
@@ -251,9 +305,9 @@ Aturan bisnis yang mengikat dan diotomasi dalam sistem SIPerpus Desktop mencakup
 
 ---
 
-### 3.3 Pemodelan Sistem Menggunakan UML (Unified Modeling Language)
+### 3.4 Pemodelan Sistem Menggunakan UML (Unified Modeling Language)
 
-#### 3.3.1 Use Case Diagram & Matriks Akses Peran
+#### 3.4.1 Use Case Diagram & Matriks Akses Peran
 Use Case Diagram mendefinisikan interaksi antara aktor pengguna dengan sistem SIPerpus Desktop.
 
 ```mermaid
@@ -313,7 +367,7 @@ flowchart LR
 
 ---
 
-#### 3.3.2 Activity Diagram Peminjaman Buku
+#### 3.4.2 Activity Diagram Peminjaman Buku
 Menggambarkan alur kerja operasional pencatatan peminjaman buku dari sisi petugas dan respon sistem.
 
 ```mermaid
@@ -338,7 +392,7 @@ flowchart TD
 
 ---
 
-#### 3.3.3 Activity Diagram Pengembalian Buku & Perhitungan Denda
+#### 3.4.3 Activity Diagram Pengembalian Buku & Perhitungan Denda
 Menggambarkan mekanisme verifikasi buku kembali dan penghitungan denda otomatis.
 
 ```mermaid
@@ -362,7 +416,7 @@ flowchart TD
 
 ---
 
-#### 3.3.4 Class Diagram Arsitektur Sistem
+#### 3.4.4 Class Diagram Arsitektur Sistem
 Menunjukkan hubungan struktural antar kelas Java Swing, Service, DAO, dan Model POJO.
 
 ```mermaid
@@ -450,9 +504,9 @@ classDiagram
 
 ---
 
-### 3.4 Perancangan Basis Data (Database Design)
+### 3.5 Perancangan Basis Data (Database Design)
 
-#### 3.4.1 Entity Relationship Diagram (ERD)
+#### 3.5.1 Entity Relationship Diagram (ERD)
 Hubungan antar-entitas relasional pada basis data `perpustakaan_db`:
 
 ```mermaid
@@ -538,7 +592,7 @@ erDiagram
 
 ---
 
-#### 3.4.2 Kamus Data Fisik (7 Tabel Relasional)
+#### 3.5.2 Kamus Data Fisik (7 Tabel Relasional)
 
 **1. Tabel `users` (Pengguna Sistem & Petugas)**
 | No | Nama Kolom | Tipe Data | Keterangan / Batasan |
@@ -586,9 +640,9 @@ erDiagram
 | No | Nama Kolom | Tipe Data | Keterangan / Batasan |
 | :---: | :--- | :--- | :--- |
 | 1 | `id` | `INT AUTO_INCREMENT` | Kunci Utama (*Primary Key*) |
-| 2 | `nim` | `VARCHAR(30)` | Nomor Induk Mahasiswa/Anggota unik |
+| 2 | `nim` | `VARCHAR(30)` | NIP / NRP Personel Kemhan RI unik (disimpan pada kolom fisik `nim`) |
 | 3 | `nama` | `VARCHAR(100)` | Nama lengkap anggota |
-| 4 | `jurusan` | `VARCHAR(100)` | Program studi / divisi instansi |
+| 4 | `jurusan` | `VARCHAR(100)` | Satuan Kerja (Satker) / Divisi Dinas Kemhan RI |
 | 5 | `no_telp` | `VARCHAR(20)` | Kontak telepon |
 | 6 | `email` | `VARCHAR(100)` | Alamat surat elektronik |
 | 7 | `status` | `ENUM('aktif','nonaktif')`| Status peminjaman (default: 'aktif') |
@@ -620,7 +674,7 @@ erDiagram
 
 ---
 
-### 3.5 Perancangan Antarmuka Pengguna (User Interface)
+### 3.6 Perancangan Antarmuka Pengguna (User Interface)
 Antarmuka sistem SIPerpus Desktop dirancang dengan prinsip ergonomi kerja pustakawan:
 1. **Tata Letak Shell Utama (`HalamanUtama.java`)**: Mengadopsi struktur dua panel horizontal:
    * **Sidebar Kiri (Navigasi Persisten)**: Berisi identitas brand sistem, status kredensial pengguna yang sedang aktif, dan 12 menu navigasi terstruktur: Beranda/Dashboard, 5 Data Master (Buku, Kategori, Rak, Anggota, Petugas), 2 Form Transaksi Sirkulasi (Peminjaman & Pengembalian), serta 4 Menu Laporan Cetak Formal.
@@ -658,7 +712,7 @@ Pengembangan dan pengujian perangkat lunak SIPerpus Desktop dieksekusi pada ling
 Seluruh kode sumber disusun rapi di dalam package modular `com.perpustakaan`:
 
 ```text
-perpustakaan-desktop/
+kkp-perpustakaan-desktop/
 ├── database/
 │   ├── init.sql                      # DDL Skema 7 Tabel Relasional & Seed Data
 │   └── migrations/                   # Skrip Migrasi Skema In-App (V1 s.d. V4)
@@ -925,4 +979,5 @@ Mengacu pada keterbatasan sistem yang ada saat ini serta kaidah penulisan saran 
 * Pressman, R. S., & Maxim, B. R. (2020). *Software Engineering: A Practitioner's Approach* (9th ed.). McGraw-Hill Education.
 * Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). *Database System Concepts* (7th ed.). McGraw-Hill Education.
 * Sommerville, I. (2016). *Software Engineering* (10th ed.). Pearson Education.
+* Kementerian Pertahanan Republik Indonesia. (2026). *Sejarah Singkat, Visi Misi, dan Struktur Organisasi Kementerian Pertahanan RI*. Jakarta: Kemhan RI (https://www.kemhan.go.id & https://id.wikipedia.org/wiki/Kementerian_Pertahanan_Republik_Indonesia).
 * Wiegers, K., & Beatty, J. (2013). *Software Requirements* (3rd ed.). Microsoft Press.

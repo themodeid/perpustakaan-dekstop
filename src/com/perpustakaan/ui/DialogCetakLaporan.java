@@ -95,10 +95,25 @@ public class DialogCetakLaporan extends JDialog implements Printable {
     private void bangunDokumenKertas() {
         lembarKertasA4.removeAll();
 
-        // 1. KOP SURAT RESMI (Rapat & Proporsional, Anti-Stretching)
-        JPanel kopPanel = new JPanel();
-        kopPanel.setLayout(new BoxLayout(kopPanel, BoxLayout.Y_AXIS));
+        // 1. KOP SURAT RESMI KEMHAN RI (Logo Kiri + Teks Tengah, Rapat & Anti-Stretching)
+        JPanel kopPanel = new JPanel(new BorderLayout(12, 0));
         kopPanel.setOpaque(false);
+
+        ImageIcon logoKop = UIConstants.loadLogoKemhanIcon(56, 56);
+        if (logoKop != null) {
+            JLabel lblLogo = new JLabel(logoKop);
+            lblLogo.setVerticalAlignment(SwingConstants.CENTER);
+            kopPanel.add(lblLogo, BorderLayout.WEST);
+
+            JPanel rightSpacer = new JPanel();
+            rightSpacer.setOpaque(false);
+            rightSpacer.setPreferredSize(new Dimension(56, 56));
+            kopPanel.add(rightSpacer, BorderLayout.EAST);
+        }
+
+        JPanel kopTextPanel = new JPanel();
+        kopTextPanel.setLayout(new BoxLayout(kopTextPanel, BoxLayout.Y_AXIS));
+        kopTextPanel.setOpaque(false);
 
         JLabel lblKop0 = new JLabel("KEMENTERIAN PERTAHANAN REPUBLIK INDONESIA", SwingConstants.CENTER);
         lblKop0.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -120,14 +135,16 @@ public class DialogCetakLaporan extends JDialog implements Printable {
         lblKop3.setForeground(new Color(71, 85, 105));
         lblKop3.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        kopPanel.add(lblKop0);
-        kopPanel.add(Box.createVerticalStrut(2));
-        kopPanel.add(lblKop1);
-        kopPanel.add(Box.createVerticalStrut(2));
-        kopPanel.add(lblKop2);
-        kopPanel.add(Box.createVerticalStrut(1));
-        kopPanel.add(lblKop3);
-        kopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 68));
+        kopTextPanel.add(lblKop0);
+        kopTextPanel.add(Box.createVerticalStrut(2));
+        kopTextPanel.add(lblKop1);
+        kopTextPanel.add(Box.createVerticalStrut(2));
+        kopTextPanel.add(lblKop2);
+        kopTextPanel.add(Box.createVerticalStrut(1));
+        kopTextPanel.add(lblKop3);
+
+        kopPanel.add(kopTextPanel, BorderLayout.CENTER);
+        kopPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 74));
         lembarKertasA4.add(kopPanel);
 
         // Garis Ganda Pemisah Kop
