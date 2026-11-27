@@ -62,7 +62,7 @@ public class FormLaporanPeminjaman extends JPanel {
 
         // Filter Bar
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
-        filterPanel.setBackground(Color.WHITE);
+        filterPanel.setBackground(UIConstants.CARD_BG);
         filterPanel.setBorder(UIConstants.createCardBorder());
 
         filterPanel.add(new JLabel("Tgl Mulai (YYYY-MM-DD):"));
@@ -75,13 +75,13 @@ public class FormLaporanPeminjaman extends JPanel {
         filterPanel.add(txtTglSelesai);
 
         JButton btnFilter = UIConstants.createStyledButton("Terapkan Filter", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        JButton btnReset = UIConstants.createStyledButton("Reset", Color.LIGHT_GRAY, Color.BLACK);
+        JButton btnReset = UIConstants.createStyledButton("Reset", UIConstants.BTN_NEUTRAL, UIConstants.TEXT_PRIMARY);
         filterPanel.add(btnFilter);
         filterPanel.add(btnReset);
 
         // Table Panel
         JPanel tableCard = new JPanel(new BorderLayout(0, 10));
-        tableCard.setBackground(Color.WHITE);
+        tableCard.setBackground(UIConstants.CARD_BG);
         tableCard.setBorder(UIConstants.createCardBorder());
 
         String[] cols = {"No", "Kode Transaksi", "NIP / NRP", "Nama Personel", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Buku Dipinjam"};

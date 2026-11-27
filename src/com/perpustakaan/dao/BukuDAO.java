@@ -173,12 +173,14 @@ public class BukuDAO {
     }
 
     public void kurangiStok(Connection conn, int bukuId, int qty) throws SQLException {
-        String sql = "UPDATE buku SET stok_tersedia = stok_tersedia - ? WHERE id = ? AND stok_tersedia >= ?";
+        String sql = "UPDATE buku SET stok_tersedia = stok_tersedia - ? WHERE id = ? AND stok_tersedia >= ? AND is_deleted = 0";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, qty);
             ps.setInt(2, bukuId);
             ps.setInt(3, qty);
-            ps.executeUpdate();
+            if (ps.executeUpdate() == 0) {
+                throw new SQLException("Stok buku ID " + bukuId + " tidak mencukupi atau buku tidak aktif.");
+            }
         }
     }
 

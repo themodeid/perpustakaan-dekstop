@@ -44,7 +44,7 @@ public class FormMasterKategori extends JPanel {
 
         // Form Panel
         JPanel formCard = new JPanel(new GridBagLayout());
-        formCard.setBackground(Color.WHITE);
+        formCard.setBackground(UIConstants.CARD_BG);
         formCard.setBorder(UIConstants.createCardBorder());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -71,7 +71,7 @@ public class FormMasterKategori extends JPanel {
         btnPanel.setOpaque(false);
 
         JButton btnSimpan = UIConstants.createStyledButton("Simpan", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        JButton btnReset = UIConstants.createStyledButton("Reset", Color.LIGHT_GRAY, Color.BLACK);
+        JButton btnReset = UIConstants.createStyledButton("Reset", UIConstants.BTN_NEUTRAL, UIConstants.TEXT_PRIMARY);
         JButton btnHapus = UIConstants.createStyledButton("Hapus", UIConstants.ACCENT_RED, Color.WHITE);
 
         btnPanel.add(btnSimpan);
@@ -81,7 +81,7 @@ public class FormMasterKategori extends JPanel {
 
         // Table Panel
         JPanel tableCard = new JPanel(new BorderLayout(0, 10));
-        tableCard.setBackground(Color.WHITE);
+        tableCard.setBackground(UIConstants.CARD_BG);
         tableCard.setBorder(UIConstants.createCardBorder());
 
         String[] columns = {"ID", "Nama Kategori"};

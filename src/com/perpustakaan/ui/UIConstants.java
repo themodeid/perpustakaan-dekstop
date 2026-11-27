@@ -11,17 +11,30 @@ import javax.swing.JButton;
 import javax.swing.border.Border;
 
 public class UIConstants {
-    // Skema Warna Modern
-    public static final Color PRIMARY_COLOR = new Color(30, 110, 235);     // Royal Blue
-    public static final Color PRIMARY_DARK = new Color(20, 80, 180);
-    public static final Color ACCENT_GREEN = new Color(40, 167, 69);       // Emerald Green
-    public static final Color ACCENT_RED = new Color(220, 53, 69);         // Danger Red
-    public static final Color ACCENT_ORANGE = new Color(245, 134, 52);     // Warning Orange
-    public static final Color SIDEBAR_BG = new Color(28, 36, 52);          // Deep Dark Navy
+    // Skema Warna Tema Gelap Pertahanan (Midnight Navy + Emas, selaras Logo Kemhan RI)
+    public static final Color PRIMARY_COLOR = new Color(38, 84, 160);      // Navy Terang (tombol utama)
+    public static final Color PRIMARY_DARK = new Color(26, 52, 100);       // Navy Pertahanan
+    public static final Color ACCENT_GREEN = new Color(40, 140, 98);       // Hijau Dinas
+    public static final Color ACCENT_RED = new Color(190, 55, 55);         // Merah Peringatan
+    public static final Color ACCENT_ORANGE = new Color(184, 134, 28);     // Emas Tua (aksi sekunder)
+    public static final Color GOLD = new Color(212, 175, 55);              // Emas Kehormatan
+    public static final Color MAROON = new Color(122, 24, 32);             // Marun Kemhan
+    public static final Color INFO_BLUE = new Color(110, 160, 235);        // Biru teks/angka di latar gelap
+    public static final Color TEXT_GREEN = new Color(72, 187, 138);
+    public static final Color TEXT_RED = new Color(235, 100, 100);
+    public static final Color TEXT_AMBER = new Color(230, 175, 60);
+    public static final Color SIDEBAR_BG = new Color(8, 14, 28);           // Midnight
     public static final Color SIDEBAR_TEXT = new Color(210, 220, 235);
-    public static final Color SIDEBAR_ACTIVE = new Color(45, 58, 85);
-    public static final Color BG_LIGHT = new Color(244, 246, 249);
-    public static final Color CARD_BG = Color.WHITE;
+    public static final Color SIDEBAR_ACTIVE = new Color(24, 44, 84);
+    public static final Color SIDEBAR_DIVIDER = new Color(30, 46, 78);
+    public static final Color TABLE_HEADER_BG = new Color(30, 44, 74);
+    public static final Color BG_LIGHT = new Color(13, 20, 36);            // Kanvas halaman gelap
+    public static final Color CARD_BG = new Color(21, 31, 52);             // Permukaan kartu
+    public static final Color BG_INSET = new Color(16, 24, 42);            // Area cekung / empty state
+    public static final Color BORDER_COLOR = new Color(40, 56, 90);        // Garis tipis
+    public static final Color TEXT_PRIMARY = new Color(230, 236, 246);
+    public static final Color TEXT_MUTED = new Color(148, 163, 184);
+    public static final Color BTN_NEUTRAL = new Color(51, 65, 95);
 
     // Font Standar Modern
     public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 22);
@@ -43,7 +56,7 @@ public class UIConstants {
 
     public static Border createCardBorder() {
         return BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(225, 230, 238), 1),
+                BorderFactory.createLineBorder(BORDER_COLOR, 1),
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         );
     }

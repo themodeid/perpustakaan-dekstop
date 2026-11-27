@@ -7,27 +7,35 @@ import com.perpustakaan.model.Peminjaman;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PeminjamanDAO {
 
     private final BukuDAO bukuDAO = new BukuDAO();
 
     public List<Peminjaman> getAll() throws SQLException {
+        return getRecent(500);
+    }
+
+    public List<Peminjaman> getRecent(int limit) throws SQLException {
+        int safeLimit = Math.max(1, Math.min(limit, 500));
         String sql = "SELECT p.*, a.nama AS nama_anggota, a.nim AS nim_anggota, u.nama_lengkap AS nama_petugas " +
                      "FROM peminjaman p " +
                      "JOIN anggota a ON p.anggota_id = a.id " +
                      "JOIN users u ON p.user_id = u.id " +
-                     "ORDER BY p.id DESC";
+                     "ORDER BY p.id DESC LIMIT ?";
         List<Peminjaman> list = new ArrayList<>();
         try (Connection conn = DatabaseConfig.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Peminjaman p = mapResultSetToPeminjaman(rs);
-                p.setDetailList(getDetailByPeminjamanId(p.getId()));
-                list.add(p);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, safeLimit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToPeminjaman(rs));
+                }
             }
+            attachDetailsBatch(conn, list);
         }
         return list;
     }
@@ -38,16 +46,15 @@ public class PeminjamanDAO {
                      "JOIN anggota a ON p.anggota_id = a.id " +
                      "JOIN users u ON p.user_id = u.id " +
                      "WHERE p.status IN ('dipinjam', 'terlambat') " +
-                     "ORDER BY p.tanggal_jatuh_tempo ASC";
+                     "ORDER BY p.tanggal_jatuh_tempo ASC LIMIT 500";
         List<Peminjaman> list = new ArrayList<>();
         try (Connection conn = DatabaseConfig.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Peminjaman p = mapResultSetToPeminjaman(rs);
-                p.setDetailList(getDetailByPeminjamanId(p.getId()));
-                list.add(p);
+                list.add(mapResultSetToPeminjaman(rs));
             }
+            attachDetailsBatch(conn, list);
         }
         return list;
     }
@@ -160,7 +167,8 @@ public class PeminjamanDAO {
 
     public boolean prosesPengembalian(int peminjamanId, Date tglKembali, BigDecimal denda, 
                                      String catatan, List<Integer> bukuIds) throws SQLException {
-        String sqlUpdate = "UPDATE peminjaman SET tanggal_kembali = ?, total_denda = ?, status = 'kembali', catatan = ? WHERE id = ?";
+        String sqlUpdate = "UPDATE peminjaman SET tanggal_kembali = ?, total_denda = ?, status = 'kembali', catatan = ? " +
+                           "WHERE id = ? AND status IN ('dipinjam', 'terlambat')";
 
         Connection conn = null;
         try {
@@ -172,7 +180,9 @@ public class PeminjamanDAO {
                 ps.setBigDecimal(2, denda);
                 ps.setString(3, catatan);
                 ps.setInt(4, peminjamanId);
-                ps.executeUpdate();
+                if (ps.executeUpdate() == 0) {
+                    throw new SQLException("Transaksi sudah dikembalikan sebelumnya atau tidak ditemukan.");
+                }
             }
 
             // Kembalikan stok untuk setiap buku
@@ -214,7 +224,7 @@ public class PeminjamanDAO {
         if (tglSelesai != null) {
             sql.append("AND p.tanggal_pinjam <= ? ");
         }
-        sql.append("ORDER BY p.id DESC");
+        sql.append("ORDER BY p.id DESC LIMIT 500");
 
         List<Peminjaman> list = new ArrayList<>();
         try (Connection conn = DatabaseConfig.getConnection();
@@ -232,13 +242,49 @@ public class PeminjamanDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Peminjaman p = mapResultSetToPeminjaman(rs);
-                    p.setDetailList(getDetailByPeminjamanId(p.getId()));
-                    list.add(p);
+                    list.add(mapResultSetToPeminjaman(rs));
+                }
+            }
+            attachDetailsBatch(conn, list);
+        }
+        return list;
+    }
+
+    private void attachDetailsBatch(Connection conn, List<Peminjaman> list) throws SQLException {
+        if (list == null || list.isEmpty()) return;
+
+        Map<Integer, List<DetailPeminjaman>> byPeminjaman = new HashMap<>();
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            byPeminjaman.put(list.get(i).getId(), new ArrayList<>());
+            if (i > 0) placeholders.append(',');
+            placeholders.append('?');
+        }
+
+        String sql = "SELECT dp.*, b.judul, b.pengarang FROM detail_peminjaman dp " +
+                     "JOIN buku b ON dp.buku_id = b.id " +
+                     "WHERE dp.peminjaman_id IN (" + placeholders + ")";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < list.size(); i++) {
+                ps.setInt(i + 1, list.get(i).getId());
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DetailPeminjaman dp = new DetailPeminjaman();
+                    dp.setId(rs.getInt("id"));
+                    dp.setPeminjamanId(rs.getInt("peminjaman_id"));
+                    dp.setBukuId(rs.getInt("buku_id"));
+                    dp.setDendaPerBuku(rs.getBigDecimal("denda_per_buku"));
+                    dp.setJudulBuku(rs.getString("judul"));
+                    dp.setPengarangBuku(rs.getString("pengarang"));
+                    List<DetailPeminjaman> bucket = byPeminjaman.get(dp.getPeminjamanId());
+                    if (bucket != null) bucket.add(dp);
                 }
             }
         }
-        return list;
+        for (Peminjaman p : list) {
+            p.setDetailList(byPeminjaman.getOrDefault(p.getId(), new ArrayList<>()));
+        }
     }
 
     public BigDecimal getTotalDendaTerkumpul() throws SQLException {
@@ -249,6 +295,21 @@ public class PeminjamanDAO {
             if (rs.next()) return rs.getBigDecimal(1);
         }
         return BigDecimal.ZERO;
+    }
+
+    public int countBukuAktifByAnggota(int anggotaId) throws SQLException {
+        String sql = "SELECT COUNT(dp.id) " +
+                     "FROM detail_peminjaman dp " +
+                     "JOIN peminjaman p ON dp.peminjaman_id = p.id " +
+                     "WHERE p.anggota_id = ? AND p.status IN ('dipinjam', 'terlambat')";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, anggotaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return 0;
     }
 
     public int countTransaksiBulanIni() throws SQLException {

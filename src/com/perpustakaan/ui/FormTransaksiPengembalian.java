@@ -7,6 +7,8 @@ import com.perpustakaan.service.LayananAutentikasi;
 import com.perpustakaan.service.LayananSirkulasi;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -42,6 +44,7 @@ public class FormTransaksiPengembalian extends JPanel {
 
     private Peminjaman selectedPeminjaman;
     private BigDecimal currentDenda = BigDecimal.ZERO;
+    private List<Peminjaman> daftarAktif = new ArrayList<>();
 
     public FormTransaksiPengembalian() {
         setLayout(new BorderLayout(15, 15));
@@ -73,14 +76,14 @@ public class FormTransaksiPengembalian extends JPanel {
 
         // Left Panel: Table Transaksi Dipinjam Aktif
         JPanel leftCard = new JPanel(new BorderLayout(0, 10));
-        leftCard.setBackground(Color.WHITE);
+        leftCard.setBackground(UIConstants.CARD_BG);
         leftCard.setBorder(UIConstants.createCardBorder());
 
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
         searchBar.setOpaque(false);
-        searchBar.add(new JLabel("Cari Kode Transaksi:"));
-        txtSearchKode = new JTextField(15);
-        txtSearchKode.setPreferredSize(new Dimension(150, 30));
+        searchBar.add(new JLabel("Cari Kode / NIP / Nama:"));
+        txtSearchKode = new JTextField(18);
+        txtSearchKode.setPreferredSize(new Dimension(180, 30));
         JButton btnCari = UIConstants.createStyledButton("Cari", UIConstants.PRIMARY_DARK, Color.WHITE);
         searchBar.add(txtSearchKode);
         searchBar.add(btnCari);
@@ -95,13 +98,30 @@ public class FormTransaksiPengembalian extends JPanel {
         tableAktif.setRowHeight(30);
         tableAktif.setFont(UIConstants.FONT_REGULAR);
         tableAktif.getTableHeader().setFont(UIConstants.FONT_BOLD);
+        tableAktif.getTableHeader().setBackground(UIConstants.TABLE_HEADER_BG);
+        tableAktif.getTableHeader().setForeground(UIConstants.TEXT_PRIMARY);
 
         DefaultTableCellRenderer cr = new DefaultTableCellRenderer();
         cr.setHorizontalAlignment(SwingConstants.CENTER);
         tableAktif.getColumnModel().getColumn(0).setPreferredWidth(30);
         tableAktif.getColumnModel().getColumn(0).setCellRenderer(cr);
         tableAktif.getColumnModel().getColumn(4).setCellRenderer(cr);
-        tableAktif.getColumnModel().getColumn(5).setCellRenderer(cr);
+        tableAktif.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object val, boolean sel, boolean foc, int row, int col) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(t, val, sel, foc, row, col);
+                lbl.setHorizontalAlignment(SwingConstants.CENTER);
+                String text = val != null ? val.toString() : "";
+                if (text.contains("TELAT")) {
+                    lbl.setForeground(sel ? Color.WHITE : UIConstants.TEXT_RED);
+                    lbl.setFont(UIConstants.FONT_BOLD);
+                } else {
+                    lbl.setForeground(sel ? Color.WHITE : UIConstants.TEXT_PRIMARY);
+                    lbl.setFont(UIConstants.FONT_REGULAR);
+                }
+                return lbl;
+            }
+        });
         tableAktif.getColumnModel().getColumn(6).setCellRenderer(cr);
 
         leftCard.add(new JScrollPane(tableAktif), BorderLayout.CENTER);
@@ -109,7 +129,7 @@ public class FormTransaksiPengembalian extends JPanel {
 
         // Right Panel: Detail Pengembalian & Kalkulasi Denda
         JPanel rightCard = new JPanel(new BorderLayout(0, 15));
-        rightCard.setBackground(Color.WHITE);
+        rightCard.setBackground(UIConstants.CARD_BG);
         rightCard.setBorder(UIConstants.createCardBorder());
 
         JLabel lblDetailTitle = new JLabel("Verifikasi Pengembalian & Denda");
@@ -129,9 +149,9 @@ public class FormTransaksiPengembalian extends JPanel {
         lblStatusTelat = new JLabel("-");
         lblTotalDenda = new JLabel("Rp 0");
         lblTotalDenda.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        lblTotalDenda.setForeground(UIConstants.ACCENT_RED);
+        lblTotalDenda.setForeground(UIConstants.TEXT_RED);
         txtCatatan = new JTextArea(3, 15);
-        txtCatatan.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        txtCatatan.setBorder(BorderFactory.createLineBorder(UIConstants.BORDER_COLOR));
 
         int r = 0;
         addDetailRow(detailGrid, gbc, r++, "Kode Transaksi:", lblKode);
@@ -173,10 +193,19 @@ public class FormTransaksiPengembalian extends JPanel {
         });
 
         btnCari.addActionListener(e -> {
-            String kode = txtSearchKode.getText().trim();
-            if (!kode.isEmpty()) {
-                loadPeminjamanDetail(kode);
+            String query = txtSearchKode.getText().trim();
+            filterTabelAktif(query);
+            if (tableModel.getRowCount() == 1) {
+                tableAktif.setRowSelectionInterval(0, 0);
+            } else if (tableModel.getRowCount() == 0 && !query.isEmpty()) {
+                loadPeminjamanDetail(query);
             }
+        });
+
+        txtSearchKode.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) { filterTabelAktif(txtSearchKode.getText()); }
+            @Override public void removeUpdate(DocumentEvent e) { filterTabelAktif(txtSearchKode.getText()); }
+            @Override public void changedUpdate(DocumentEvent e) { filterTabelAktif(txtSearchKode.getText()); }
         });
 
         btnCetakBuktiManual.addActionListener(e -> {
@@ -240,22 +269,38 @@ public class FormTransaksiPengembalian extends JPanel {
 
     public void loadDataAktif() {
         try {
-            List<Peminjaman> list = peminjamanDAO.getAktifPinjam();
-            tableModel.setRowCount(0);
-            for (Peminjaman p : list) {
-                int jumlahBuku = p.getDetailList() != null ? p.getDetailList().size() : 0;
-                tableModel.addRow(new Object[]{
-                        p.getId(),
-                        p.getKodeTransaksi(),
-                        p.getNimAnggota(),
-                        p.getNamaAnggota(),
-                        p.getTanggalPinjam(),
-                        p.getTanggalJatuhTempo(),
-                        jumlahBuku + " buku"
-                });
-            }
+            daftarAktif = peminjamanDAO.getAktifPinjam();
+            filterTabelAktif(txtSearchKode != null ? txtSearchKode.getText() : "");
         } catch (Exception ex) {
             System.err.println("Gagal memuat transaksi aktif: " + ex.getMessage());
+        }
+    }
+
+    private void filterTabelAktif(String keyword) {
+        String q = keyword == null ? "" : keyword.trim().toLowerCase();
+        LocalDate today = LocalDate.now();
+        tableModel.setRowCount(0);
+        for (Peminjaman p : daftarAktif) {
+            String kode = p.getKodeTransaksi() != null ? p.getKodeTransaksi() : "";
+            String nip = p.getNimAnggota() != null ? p.getNimAnggota() : "";
+            String nama = p.getNamaAnggota() != null ? p.getNamaAnggota() : "";
+            if (!q.isEmpty() && !kode.toLowerCase().contains(q) && !nip.toLowerCase().contains(q) && !nama.toLowerCase().contains(q)) {
+                continue;
+            }
+            int jumlahBuku = p.getDetailList() != null ? p.getDetailList().size() : 0;
+            String tempoStr = p.getTanggalJatuhTempo() != null ? p.getTanggalJatuhTempo().toString() : "-";
+            if (p.getTanggalJatuhTempo() != null && today.isAfter(p.getTanggalJatuhTempo().toLocalDate())) {
+                tempoStr += " (TELAT)";
+            }
+            tableModel.addRow(new Object[]{
+                    p.getId(),
+                    kode,
+                    nip,
+                    nama,
+                    p.getTanggalPinjam(),
+                    tempoStr,
+                    jumlahBuku + " buku"
+            });
         }
     }
 
@@ -280,11 +325,11 @@ public class FormTransaksiPengembalian extends JPanel {
 
             if (telat > 0) {
                 lblStatusTelat.setText("TERLAMBAT " + telat + " HARI (" + jumlahBuku + " buku)");
-                lblStatusTelat.setForeground(UIConstants.ACCENT_RED);
+                lblStatusTelat.setForeground(UIConstants.TEXT_RED);
                 lblStatusTelat.setFont(UIConstants.FONT_BOLD);
             } else {
                 lblStatusTelat.setText("Tepat Waktu (Tidak Ada Denda)");
-                lblStatusTelat.setForeground(UIConstants.ACCENT_GREEN);
+                lblStatusTelat.setForeground(UIConstants.TEXT_GREEN);
                 lblStatusTelat.setFont(UIConstants.FONT_BOLD);
             }
 

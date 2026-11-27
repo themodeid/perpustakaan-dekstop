@@ -55,7 +55,7 @@ public class FormMasterAnggota extends JPanel {
 
         // Filter / Search Toolbar
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        filterPanel.setBackground(Color.WHITE);
+        filterPanel.setBackground(UIConstants.CARD_BG);
         filterPanel.setBorder(UIConstants.createCardBorder());
 
         filterPanel.add(new JLabel("Pencarian (NIP/NRP / Nama / Satker):"));
@@ -65,13 +65,13 @@ public class FormMasterAnggota extends JPanel {
         filterPanel.add(txtSearch);
 
         JButton btnCari = UIConstants.createStyledButton("Cari", UIConstants.PRIMARY_DARK, Color.WHITE);
-        JButton btnReset = UIConstants.createStyledButton("Reset", Color.LIGHT_GRAY, Color.BLACK);
+        JButton btnReset = UIConstants.createStyledButton("Reset", UIConstants.BTN_NEUTRAL, UIConstants.TEXT_PRIMARY);
         filterPanel.add(btnCari);
         filterPanel.add(btnReset);
 
         // Table Panel
         JPanel tableContainer = new JPanel(new BorderLayout());
-        tableContainer.setBackground(Color.WHITE);
+        tableContainer.setBackground(UIConstants.CARD_BG);
         tableContainer.setBorder(UIConstants.createCardBorder());
 
         String[] columns = {"ID", "NIP / NRP", "Nama Personel", "Satuan Kerja (Satker)", "No. Telepon", "Email Dinas", "Status"};
@@ -84,7 +84,7 @@ public class FormMasterAnggota extends JPanel {
         table.setRowHeight(30);
         table.setFont(UIConstants.FONT_REGULAR);
         table.getTableHeader().setFont(UIConstants.FONT_BOLD);
-        table.getTableHeader().setBackground(new Color(241, 245, 249));
+        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER_BG);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -243,7 +243,7 @@ public class FormMasterAnggota extends JPanel {
 
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnSimpan = UIConstants.createStyledButton("Simpan", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        JButton btnBatal = UIConstants.createStyledButton("Batal", Color.GRAY, Color.WHITE);
+        JButton btnBatal = UIConstants.createStyledButton("Batal", UIConstants.TEXT_MUTED, Color.WHITE);
 
         btnBar.add(btnBatal);
         btnBar.add(btnSimpan);
