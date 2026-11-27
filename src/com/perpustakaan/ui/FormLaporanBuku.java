@@ -59,7 +59,7 @@ public class FormLaporanBuku extends JPanel {
 
         // Table Card
         JPanel tableCard = new JPanel(new BorderLayout(0, 10));
-        tableCard.setBackground(Color.WHITE);
+        tableCard.setBackground(UIConstants.CARD_BG);
         tableCard.setBorder(UIConstants.createCardBorder());
 
         String[] cols = {"No", "Judul Buku", "Pengarang", "Penerbit", "Tahun", "Kategori", "Rak", "Stok Total", "Tersedia"};

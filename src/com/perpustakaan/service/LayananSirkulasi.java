@@ -60,6 +60,17 @@ public class LayananSirkulasi {
             throw new IllegalArgumentException("Anggota (" + anggota.getNama() + ") sedang berstatus NON-AKTIF!");
         }
 
+        // Validasi plafon kumulatif (maksimal 3 buku aktif per personel di seluruh transaksi)
+        int sedangDipinjam = peminjamanDAO.countBukuAktifByAnggota(anggotaId);
+        if (sedangDipinjam + bukuIds.size() > MAX_BUKU_PINJAM) {
+            int sisaKuota = Math.max(0, MAX_BUKU_PINJAM - sedangDipinjam);
+            throw new IllegalArgumentException(
+                    "Batas maksimal pinjaman (" + MAX_BUKU_PINJAM + " buku/personel) terlampaui!\n" +
+                    anggota.getNama() + " saat ini masih meminjam " + sedangDipinjam + " buku aktif " +
+                    "(sisa kuota: " + sisaKuota + " buku)."
+            );
+        }
+
         // Cek stok buku
         for (Integer bId : bukuIds) {
             Buku b = bukuDAO.getById(bId);

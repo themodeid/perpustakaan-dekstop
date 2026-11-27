@@ -48,10 +48,6 @@ public class PanelBeranda extends JPanel {
         this.onNavigateRequested = listener;
     }
 
-    public void setOnLoginRequested(Runnable listener) {
-        // Dipertahankan untuk kompatibilitas
-    }
-
     private void initUI() {
         // ================= TOP SECTION: Title Bar & Refresh =================
         JPanel topContainer = new JPanel(new BorderLayout(0, 15));
@@ -65,11 +61,11 @@ public class PanelBeranda extends JPanel {
 
         JLabel lblSectionTitle = new JLabel("Dashboard Utama: Pusat Kendali Perpustakaan");
         lblSectionTitle.setFont(UIConstants.FONT_TITLE);
-        lblSectionTitle.setForeground(new Color(15, 23, 42));
+        lblSectionTitle.setForeground(UIConstants.TEXT_PRIMARY);
 
         JLabel lblSectionDesc = new JLabel("Sistem Informasi Manajemen Sirkulasi & Inventaris Buku — Kementerian Pertahanan RI");
         lblSectionDesc.setFont(UIConstants.FONT_REGULAR);
-        lblSectionDesc.setForeground(new Color(100, 116, 139));
+        lblSectionDesc.setForeground(UIConstants.TEXT_MUTED);
 
         titleTextPanel.add(lblSectionTitle);
         titleTextPanel.add(lblSectionDesc);
@@ -91,44 +87,33 @@ public class PanelBeranda extends JPanel {
         lblTotalAnggota = new JLabel("0", SwingConstants.LEFT);
         lblTotalDenda = new JLabel("Rp 0", SwingConstants.LEFT);
 
-        cardsGrid.add(createMetricCard("Total Koleksi Buku", lblTotalBuku, "BUKU", new Color(37, 99, 235)));
-        cardsGrid.add(createMetricCard("Buku Sedang Dipinjam", lblBukuDipinjam, "PINJAM", new Color(217, 119, 6)));
-        cardsGrid.add(createMetricCard("Anggota Terdaftar", lblTotalAnggota, "MEMBER", new Color(5, 150, 105)));
-        cardsGrid.add(createMetricCard("Total Denda Terkumpul", lblTotalDenda, "DENDA", new Color(220, 38, 38)));
+        cardsGrid.add(createMetricCard("Total Koleksi Buku", lblTotalBuku, "BUKU", UIConstants.INFO_BLUE));
+        cardsGrid.add(createMetricCard("Buku Sedang Dipinjam", lblBukuDipinjam, "PINJAM", UIConstants.TEXT_AMBER));
+        cardsGrid.add(createMetricCard("Personel Terdaftar", lblTotalAnggota, "PERSONEL", UIConstants.TEXT_GREEN));
+        cardsGrid.add(createMetricCard("Total Denda Terkumpul", lblTotalDenda, "DENDA", UIConstants.TEXT_RED));
 
         topContainer.add(cardsGrid, BorderLayout.SOUTH);
         add(topContainer, BorderLayout.NORTH);
 
-        // ================= MAIN SPLIT (62% Left Sirkulasi : 38% Right Quick Actions) =================
-        JPanel mainGrid = new JPanel(new GridBagLayout());
+        // ================= MAIN SPLIT (Left Sirkulasi Fleksibel + Right Quick Actions 340px Anti-Potong) =================
+        JPanel mainGrid = new JPanel(new BorderLayout(15, 0));
         mainGrid.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weighty = 1.0;
 
         // ---------- LEFT PANEL (Tabel Sirkulasi / Empty State) ----------
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.63;
-        gbc.insets = new Insets(0, 0, 0, 15);
-
         JPanel leftCard = new JPanel(new BorderLayout(0, 10));
-        leftCard.setBackground(Color.WHITE);
-        leftCard.setBorder(BorderFactory.createCompoundBorder(
-                UIConstants.createCardBorder(),
-                BorderFactory.createEmptyBorder(14, 16, 14, 16)
-        ));
+        leftCard.setBackground(UIConstants.CARD_BG);
+        leftCard.setBorder(UIConstants.createCardBorder());
 
         JPanel tableHeaderPanel = new JPanel(new BorderLayout());
         tableHeaderPanel.setOpaque(false);
 
         JLabel lblTableTitle = new JLabel("Aktivitas Sirkulasi Terkini");
         lblTableTitle.setFont(UIConstants.FONT_HEADER);
-        lblTableTitle.setForeground(new Color(30, 41, 59));
+        lblTableTitle.setForeground(UIConstants.TEXT_PRIMARY);
 
         JLabel lblTableSub = new JLabel("Riwayat transaksi peminjaman aktif & jatuh tempo");
         lblTableSub.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblTableSub.setForeground(new Color(100, 116, 139));
+        lblTableSub.setForeground(UIConstants.TEXT_MUTED);
 
         tableHeaderPanel.add(lblTableTitle, BorderLayout.WEST);
         tableHeaderPanel.add(lblTableSub, BorderLayout.EAST);
@@ -140,7 +125,7 @@ public class PanelBeranda extends JPanel {
         tableSwitchContainer.setOpaque(false);
 
         // Table Panel
-        String[] columns = {"Kode Transaksi", "NIP / NRP", "Personel", "Petugas", "Tgl Pinjam", "Jatuh Tempo", "Status", "Denda"};
+        String[] columns = {"Kode", "NIP / NRP", "Personel", "Tgl Pinjam", "Jatuh Tempo", "Status", "Denda"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -152,41 +137,43 @@ public class PanelBeranda extends JPanel {
         tblTransaksi.setFont(UIConstants.FONT_REGULAR);
         tblTransaksi.setRowHeight(30);
         tblTransaksi.getTableHeader().setFont(UIConstants.FONT_BOLD);
-        tblTransaksi.getTableHeader().setBackground(new Color(241, 245, 249));
+        tblTransaksi.getTableHeader().setBackground(UIConstants.TABLE_HEADER_BG);
+        tblTransaksi.getTableHeader().setForeground(UIConstants.TEXT_PRIMARY);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        tblTransaksi.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        tblTransaksi.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        tblTransaksi.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        tblTransaksi.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
-        tblTransaksi.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        for (int c : new int[]{0, 1, 3, 4, 5}) {
+            tblTransaksi.getColumnModel().getColumn(c).setCellRenderer(centerRenderer);
+        }
+        int[] lebarKolom = {120, 120, 170, 95, 95, 85, 90};
+        for (int c = 0; c < lebarKolom.length; c++) {
+            tblTransaksi.getColumnModel().getColumn(c).setPreferredWidth(lebarKolom[c]);
+        }
 
         JScrollPane scrollPane = new JScrollPane(tblTransaksi);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240)));
+        scrollPane.setBorder(BorderFactory.createLineBorder(UIConstants.BORDER_COLOR));
         tableSwitchContainer.add(scrollPane, "table");
 
         // Empty State Panel (Anti-Halaman Kosong)
         JPanel emptyPanel = new JPanel();
         emptyPanel.setLayout(new BoxLayout(emptyPanel, BoxLayout.Y_AXIS));
-        emptyPanel.setBackground(new Color(248, 250, 252));
+        emptyPanel.setBackground(UIConstants.BG_INSET);
         emptyPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+                BorderFactory.createLineBorder(UIConstants.BORDER_COLOR, 1),
                 BorderFactory.createEmptyBorder(30, 20, 30, 20)
         ));
 
-        JLabel lblEmptyIcon = new JLabel("📚", SwingConstants.CENTER);
-        lblEmptyIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 42));
+        JLabel lblEmptyIcon = new JLabel(UIConstants.loadLogoKemhanIcon(72, 72), SwingConstants.CENTER);
         lblEmptyIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblEmptyTitle = new JLabel("Belum Ada Transaksi Sirkulasi Berjalan", SwingConstants.CENTER);
         lblEmptyTitle.setFont(UIConstants.FONT_HEADER);
-        lblEmptyTitle.setForeground(new Color(30, 41, 59));
+        lblEmptyTitle.setForeground(UIConstants.TEXT_PRIMARY);
         lblEmptyTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblEmptyDesc = new JLabel("Seluruh buku tersedia di rak. Klik tombol di bawah untuk membuat peminjaman baru.", SwingConstants.CENTER);
         lblEmptyDesc.setFont(UIConstants.FONT_REGULAR);
-        lblEmptyDesc.setForeground(new Color(100, 116, 139));
+        lblEmptyDesc.setForeground(UIConstants.TEXT_MUTED);
         lblEmptyDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton btnStartPinjam = UIConstants.createStyledButton("+ Buat Transaksi Peminjaman Baru", UIConstants.PRIMARY_COLOR, Color.WHITE);
@@ -209,35 +196,28 @@ public class PanelBeranda extends JPanel {
 
         tableSwitchContainer.add(emptyPanel, "empty");
         leftCard.add(tableSwitchContainer, BorderLayout.CENTER);
-        mainGrid.add(leftCard, gbc);
+        mainGrid.add(leftCard, BorderLayout.CENTER);
 
         // ---------- RIGHT PANEL (Quick Actions & Ketentuan Layanan) ----------
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.37;
-        gbc.insets = new Insets(0, 0, 0, 0);
-
-        JPanel rightContainer = new JPanel();
+        JPanel rightContainer = new ScrollablePanel();
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
         rightContainer.setOpaque(false);
 
         // Card A: Aksi Cepat Pustakawan
-        JPanel actionCard = new JPanel(new BorderLayout(0, 12));
-        actionCard.setBackground(Color.WHITE);
-        actionCard.setBorder(BorderFactory.createCompoundBorder(
-                UIConstants.createCardBorder(),
-                BorderFactory.createEmptyBorder(14, 16, 14, 16)
-        ));
+        JPanel actionCard = new JPanel(new BorderLayout(0, 10));
+        actionCard.setBackground(UIConstants.CARD_BG);
+        actionCard.setBorder(UIConstants.createCardBorder());
+        actionCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 260));
 
         JPanel actionTitleBox = new JPanel(new GridLayout(2, 1, 0, 2));
         actionTitleBox.setOpaque(false);
-        JLabel lblActionTitle = new JLabel("⚡ Aksi Cepat Pustakawan");
+        JLabel lblActionTitle = new JLabel("Aksi Cepat Pustakawan");
         lblActionTitle.setFont(UIConstants.FONT_HEADER);
-        lblActionTitle.setForeground(new Color(15, 23, 42));
+        lblActionTitle.setForeground(UIConstants.TEXT_PRIMARY);
 
         JLabel lblActionDesc = new JLabel("Pintas eksekusi transaksi & data dalam 1-klik");
         lblActionDesc.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblActionDesc.setForeground(new Color(100, 116, 139));
+        lblActionDesc.setForeground(UIConstants.TEXT_MUTED);
 
         actionTitleBox.add(lblActionTitle);
         actionTitleBox.add(lblActionDesc);
@@ -246,10 +226,10 @@ public class PanelBeranda extends JPanel {
         JPanel actionButtonsGrid = new JPanel(new GridLayout(4, 1, 0, 8));
         actionButtonsGrid.setOpaque(false);
 
-        JButton btnActPinjam = UIConstants.createStyledButton("🔄  Transaksi Peminjaman Buku", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        JButton btnActKembali = UIConstants.createStyledButton("↩  Pengembalian Buku & Denda", UIConstants.ACCENT_GREEN, Color.WHITE);
-        JButton btnActBuku = UIConstants.createStyledButton("📖  Input Koleksi Buku Baru", UIConstants.ACCENT_ORANGE, Color.WHITE);
-        JButton btnActAnggota = UIConstants.createStyledButton("👤  Daftarkan Anggota Baru", UIConstants.PRIMARY_DARK, Color.WHITE);
+        JButton btnActPinjam = UIConstants.createStyledButton("Transaksi Peminjaman Buku", UIConstants.PRIMARY_COLOR, Color.WHITE);
+        JButton btnActKembali = UIConstants.createStyledButton("Pengembalian Buku & Denda", UIConstants.ACCENT_GREEN, Color.WHITE);
+        JButton btnActBuku = UIConstants.createStyledButton("Input Koleksi Buku Baru", UIConstants.ACCENT_ORANGE, Color.WHITE);
+        JButton btnActAnggota = UIConstants.createStyledButton("Daftarkan Personel Baru", UIConstants.PRIMARY_DARK, Color.WHITE);
 
         btnActPinjam.setPreferredSize(new Dimension(200, 36));
         btnActKembali.setPreferredSize(new Dimension(200, 36));
@@ -272,15 +252,13 @@ public class PanelBeranda extends JPanel {
 
         // Card B: Ketentuan & Parameter Perpustakaan
         JPanel policyCard = new JPanel(new BorderLayout(0, 10));
-        policyCard.setBackground(Color.WHITE);
-        policyCard.setBorder(BorderFactory.createCompoundBorder(
-                UIConstants.createCardBorder(),
-                BorderFactory.createEmptyBorder(14, 16, 14, 16)
-        ));
+        policyCard.setBackground(UIConstants.CARD_BG);
+        policyCard.setBorder(UIConstants.createCardBorder());
+        policyCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 210));
 
-        JLabel lblPolicyTitle = new JLabel("ℹ️ Parameter Layanan Perpustakaan");
+        JLabel lblPolicyTitle = new JLabel("Parameter Layanan Perpustakaan");
         lblPolicyTitle.setFont(UIConstants.FONT_HEADER);
-        lblPolicyTitle.setForeground(new Color(15, 23, 42));
+        lblPolicyTitle.setForeground(UIConstants.TEXT_PRIMARY);
         policyCard.add(lblPolicyTitle, BorderLayout.NORTH);
 
         JPanel policyRows = new JPanel(new GridLayout(5, 1, 0, 6));
@@ -295,8 +273,24 @@ public class PanelBeranda extends JPanel {
         policyCard.add(policyRows, BorderLayout.CENTER);
         rightContainer.add(policyCard);
 
-        mainGrid.add(rightContainer, gbc);
+        JScrollPane rightScroll = new JScrollPane(rightContainer);
+        rightScroll.setBorder(BorderFactory.createEmptyBorder());
+        rightScroll.setOpaque(false);
+        rightScroll.getViewport().setOpaque(false);
+        rightScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        rightScroll.getVerticalScrollBar().setUnitIncrement(12);
+        rightScroll.setPreferredSize(new Dimension(340, 0));
+
+        mainGrid.add(rightScroll, BorderLayout.EAST);
         add(mainGrid, BorderLayout.CENTER);
+    }
+
+    private static class ScrollablePanel extends JPanel implements Scrollable {
+        @Override public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
+        @Override public int getScrollableUnitIncrement(Rectangle r, int o, int d) { return 16; }
+        @Override public int getScrollableBlockIncrement(Rectangle r, int o, int d) { return 64; }
+        @Override public boolean getScrollableTracksViewportWidth() { return true; }
+        @Override public boolean getScrollableTracksViewportHeight() { return false; }
     }
 
     private JPanel createPolicyRow(String label, String value) {
@@ -305,11 +299,11 @@ public class PanelBeranda extends JPanel {
 
         JLabel lblKey = new JLabel(label);
         lblKey.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblKey.setForeground(new Color(100, 116, 139));
+        lblKey.setForeground(UIConstants.TEXT_MUTED);
 
         JLabel lblVal = new JLabel(value);
         lblVal.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblVal.setForeground(new Color(30, 41, 59));
+        lblVal.setForeground(UIConstants.TEXT_PRIMARY);
 
         row.add(lblKey, BorderLayout.WEST);
         row.add(lblVal, BorderLayout.EAST);
@@ -318,15 +312,18 @@ public class PanelBeranda extends JPanel {
 
     private JPanel createMetricCard(String title, JLabel valueLabel, String badgeText, Color accentColor) {
         JPanel card = new JPanel(new BorderLayout(10, 10));
-        card.setBackground(Color.WHITE);
-        card.setBorder(UIConstants.createCardBorder());
+        card.setBackground(UIConstants.CARD_BG);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(3, 0, 0, 0, accentColor),
+                UIConstants.createCardBorder()
+        ));
 
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
         JLabel lblTitle = new JLabel(title);
         lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblTitle.setForeground(new Color(100, 116, 139));
+        lblTitle.setForeground(UIConstants.TEXT_MUTED);
 
         JLabel lblBadge = new JLabel(" " + badgeText + " ");
         lblBadge.setFont(new Font("Segoe UI", Font.BOLD, 10));
@@ -359,7 +356,7 @@ public class PanelBeranda extends JPanel {
             @Override
             protected Void doInBackground() throws Exception {
                 stats = layananLaporan.getStatistikDashboard();
-                recentList = peminjamanDAO.getAll();
+                recentList = peminjamanDAO.getRecent(15);
                 return null;
             }
 
@@ -388,7 +385,6 @@ public class PanelBeranda extends JPanel {
                                     p.getKodeTransaksi(),
                                     p.getNimAnggota(),
                                     p.getNamaAnggota(),
-                                    p.getNamaPetugas(),
                                     p.getTanggalPinjam(),
                                     p.getTanggalJatuhTempo(),
                                     p.getStatus().toUpperCase(),

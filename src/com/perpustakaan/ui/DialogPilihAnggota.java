@@ -42,19 +42,19 @@ public class DialogPilihAnggota extends JDialog {
     private void initUI() {
         // 1. Header Card
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBackground(UIConstants.CARD_BG);
         headerPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(226, 232, 240)),
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIConstants.BORDER_COLOR),
                 BorderFactory.createEmptyBorder(14, 18, 14, 18)
         ));
 
         JLabel lblTitle = new JLabel("Cari Data Personel Kemhan RI Aktif");
         lblTitle.setFont(UIConstants.FONT_HEADER);
-        lblTitle.setForeground(UIConstants.PRIMARY_DARK);
+        lblTitle.setForeground(UIConstants.TEXT_PRIMARY);
 
         JLabel lblSubtitle = new JLabel("Pilih personel yang terdaftar aktif untuk melakukan transaksi peminjaman buku kedinasan");
         lblSubtitle.setFont(UIConstants.FONT_SMALL);
-        lblSubtitle.setForeground(Color.GRAY);
+        lblSubtitle.setForeground(UIConstants.TEXT_MUTED);
 
         JPanel titleBox = new JPanel(new GridLayout(2, 1, 0, 3));
         titleBox.setOpaque(false);
@@ -71,7 +71,7 @@ public class DialogPilihAnggota extends JDialog {
 
         // Filter / Search Toolbar
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
-        searchBar.setBackground(Color.WHITE);
+        searchBar.setBackground(UIConstants.CARD_BG);
         searchBar.setBorder(UIConstants.createCardBorder());
 
         JLabel lblSearch = new JLabel("Cari (NIP/NRP / Nama / Satker):");
@@ -83,7 +83,7 @@ public class DialogPilihAnggota extends JDialog {
         txtSearch.setPreferredSize(new Dimension(240, 32));
         searchBar.add(txtSearch);
 
-        JButton btnReset = UIConstants.createStyledButton("Reset", Color.LIGHT_GRAY, Color.BLACK);
+        JButton btnReset = UIConstants.createStyledButton("Reset", UIConstants.BTN_NEUTRAL, UIConstants.TEXT_PRIMARY);
         searchBar.add(btnReset);
 
         centerPanel.add(searchBar, BorderLayout.NORTH);
@@ -99,7 +99,7 @@ public class DialogPilihAnggota extends JDialog {
         table.setRowHeight(28);
         table.setFont(UIConstants.FONT_REGULAR);
         table.getTableHeader().setFont(UIConstants.FONT_BOLD);
-        table.getTableHeader().setBackground(new Color(241, 245, 249));
+        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER_BG);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         DefaultTableCellRenderer center = new DefaultTableCellRenderer();
@@ -122,14 +122,14 @@ public class DialogPilihAnggota extends JDialog {
 
         // 3. Bottom Action Buttons
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 12));
-        bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(226, 232, 240)));
+        bottomPanel.setBackground(UIConstants.CARD_BG);
+        bottomPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIConstants.BORDER_COLOR));
 
-        JButton btnPilih = UIConstants.createStyledButton("✓ Pilih Anggota", UIConstants.ACCENT_GREEN, Color.WHITE);
+        JButton btnPilih = UIConstants.createStyledButton("âœ“ Pilih Anggota", UIConstants.ACCENT_GREEN, Color.WHITE);
         btnPilih.setFont(UIConstants.FONT_BOLD);
         btnPilih.setPreferredSize(new Dimension(140, 36));
 
-        JButton btnBatal = UIConstants.createStyledButton("Batal", Color.LIGHT_GRAY, Color.BLACK);
+        JButton btnBatal = UIConstants.createStyledButton("Batal", UIConstants.BTN_NEUTRAL, UIConstants.TEXT_PRIMARY);
         btnBatal.setPreferredSize(new Dimension(90, 36));
 
         bottomPanel.add(btnBatal);

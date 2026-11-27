@@ -64,7 +64,7 @@ public class FormTransaksiPeminjaman extends JPanel {
 
         // Left: Form Peminjaman
         JPanel formCard = new JPanel(new GridBagLayout());
-        formCard.setBackground(Color.WHITE);
+        formCard.setBackground(UIConstants.CARD_BG);
         formCard.setBorder(UIConstants.createCardBorder());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -133,7 +133,7 @@ public class FormTransaksiPeminjaman extends JPanel {
         gbc.gridx = 1;
         lblTglTempo = new JLabel(LocalDate.now().plusDays(7).toString());
         lblTglTempo.setFont(UIConstants.FONT_BOLD);
-        lblTglTempo.setForeground(UIConstants.ACCENT_ORANGE);
+        lblTglTempo.setForeground(UIConstants.TEXT_AMBER);
         formCard.add(lblTglTempo, gbc);
 
         // 7. Catatan
@@ -141,14 +141,14 @@ public class FormTransaksiPeminjaman extends JPanel {
         formCard.add(new JLabel("Catatan (Opsional):"), gbc);
         gbc.gridx = 1;
         txtCatatan = new JTextArea(3, 15);
-        txtCatatan.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        txtCatatan.setBorder(BorderFactory.createLineBorder(UIConstants.BORDER_COLOR));
         formCard.add(new JScrollPane(txtCatatan), gbc);
 
         contentPanel.add(formCard);
 
         // Right: Daftar Buku yang akan dipinjam (Keranjang)
         JPanel cartCard = new JPanel(new BorderLayout(0, 10));
-        cartCard.setBackground(Color.WHITE);
+        cartCard.setBackground(UIConstants.CARD_BG);
         cartCard.setBorder(UIConstants.createCardBorder());
 
         JPanel cartHeader = new JPanel(new BorderLayout());

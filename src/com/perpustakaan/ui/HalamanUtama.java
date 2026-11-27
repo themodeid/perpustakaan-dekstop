@@ -18,7 +18,6 @@ public class HalamanUtama extends JFrame {
     private final List<JButton> menuButtons = new ArrayList<>();
     private JPanel sidebarContent;
     private JLabel lblUser;
-    private JButton btnAuthAction;
 
     // Sub-panels (Antarmuka Modul Sistem)
     private PanelBeranda panelBeranda;
@@ -73,9 +72,9 @@ public class HalamanUtama extends JFrame {
 
         // Header Panel Atas (Branding Instansi Resmi)
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBackground(UIConstants.CARD_BG);
         headerPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(225, 230, 238)),
+                BorderFactory.createMatteBorder(0, 0, 3, 0, UIConstants.GOLD),
                 BorderFactory.createEmptyBorder(10, 22, 10, 22)
         ));
 
@@ -92,11 +91,11 @@ public class HalamanUtama extends JFrame {
 
         JLabel lblBrand = new JLabel("SIPerpus Desktop — Perpustakaan Digital");
         lblBrand.setFont(UIConstants.FONT_HEADER);
-        lblBrand.setForeground(UIConstants.PRIMARY_COLOR);
+        lblBrand.setForeground(UIConstants.TEXT_PRIMARY);
 
-        JLabel lblSubBrand = new JLabel("Perpustakaan Kementerian Pertahanan Republik Indonesia");
+        JLabel lblSubBrand = new JLabel("PERPUSTAKAAN KEMENTERIAN PERTAHANAN REPUBLIK INDONESIA");
         lblSubBrand.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblSubBrand.setForeground(new Color(100, 116, 139));
+        lblSubBrand.setForeground(UIConstants.GOLD);
 
         brandPanel.add(lblBrand);
         brandPanel.add(lblSubBrand);
@@ -107,15 +106,9 @@ public class HalamanUtama extends JFrame {
 
         lblUser = new JLabel("● Operator: Administrator Perpustakaan (Online)");
         lblUser.setFont(UIConstants.FONT_BOLD);
-        lblUser.setForeground(new Color(16, 149, 103)); // Online Green
-
-        btnAuthAction = UIConstants.createStyledButton("Ganti Akun", UIConstants.PRIMARY_DARK, Color.WHITE);
-        btnAuthAction.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        btnAuthAction.setPreferredSize(new Dimension(110, 32));
-        btnAuthAction.addActionListener(e -> showLoginDialog());
+        lblUser.setForeground(UIConstants.TEXT_GREEN);
 
         userInfoPanel.add(lblUser);
-        userInfoPanel.add(btnAuthAction);
 
         headerPanel.add(brandWrapper, BorderLayout.WEST);
         headerPanel.add(userInfoPanel, BorderLayout.EAST);
@@ -227,25 +220,18 @@ public class HalamanUtama extends JFrame {
         }
     }
 
-    private void showLoginDialog() {
-        FormLogin loginDialog = new FormLogin(this);
-        loginDialog.setVisible(true);
-        if (loginDialog.isLoginSuccessful()) {
-            refreshAuthUI();
-        }
-    }
-
     private void addSectionHeader(JPanel panel, String title) {
         JPanel headerWrap = new JPanel(new BorderLayout());
         headerWrap.setOpaque(false);
+        headerWrap.setAlignmentX(Component.LEFT_ALIGNMENT);
         headerWrap.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
         JLabel lbl = new JLabel("  " + title);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        lbl.setForeground(new Color(148, 163, 184));
+        lbl.setForeground(UIConstants.GOLD);
 
         headerWrap.add(lbl, BorderLayout.CENTER);
-        headerWrap.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(51, 65, 85)));
+        headerWrap.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIConstants.SIDEBAR_DIVIDER));
 
         panel.add(Box.createVerticalStrut(6));
         panel.add(headerWrap);
@@ -260,7 +246,7 @@ public class HalamanUtama extends JFrame {
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
-        btn.setForeground(new Color(226, 232, 240));
+        btn.setForeground(UIConstants.BORDER_COLOR);
         btn.setHorizontalAlignment(SwingConstants.LEFT);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setBorder(BorderFactory.createEmptyBorder(8, 14, 8, 14));
@@ -298,11 +284,11 @@ public class HalamanUtama extends JFrame {
         }
         if (activeBtn != null) {
             activeBtn.setOpaque(true);
-            activeBtn.setBackground(new Color(37, 99, 235));
+            activeBtn.setBackground(UIConstants.SIDEBAR_ACTIVE);
             activeBtn.setForeground(Color.WHITE);
             activeBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
             activeBtn.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(0, 4, 0, 0, new Color(147, 197, 253)),
+                    BorderFactory.createMatteBorder(0, 4, 0, 0, UIConstants.GOLD),
                     BorderFactory.createEmptyBorder(8, 10, 8, 14)
             ));
         }

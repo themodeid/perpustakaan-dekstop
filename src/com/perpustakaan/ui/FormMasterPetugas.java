@@ -52,7 +52,7 @@ public class FormMasterPetugas extends JPanel {
 
         // Table Panel
         JPanel tableContainer = new JPanel(new BorderLayout());
-        tableContainer.setBackground(Color.WHITE);
+        tableContainer.setBackground(UIConstants.CARD_BG);
         tableContainer.setBorder(UIConstants.createCardBorder());
 
         String[] columns = {"ID", "Username", "Nama Lengkap", "Role Hak Akses", "No. Telepon", "Tanggal Dibuat"};
@@ -65,7 +65,7 @@ public class FormMasterPetugas extends JPanel {
         table.setRowHeight(30);
         table.setFont(UIConstants.FONT_REGULAR);
         table.getTableHeader().setFont(UIConstants.FONT_BOLD);
-        table.getTableHeader().setBackground(new Color(241, 245, 249));
+        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER_BG);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -171,7 +171,7 @@ public class FormMasterPetugas extends JPanel {
 
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnSimpan = UIConstants.createStyledButton("Simpan", UIConstants.PRIMARY_COLOR, Color.WHITE);
-        JButton btnBatal = UIConstants.createStyledButton("Batal", Color.GRAY, Color.WHITE);
+        JButton btnBatal = UIConstants.createStyledButton("Batal", UIConstants.TEXT_MUTED, Color.WHITE);
 
         btnBar.add(btnBatal);
         btnBar.add(btnSimpan);

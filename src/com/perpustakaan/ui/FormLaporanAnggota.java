@@ -61,7 +61,7 @@ public class FormLaporanAnggota extends JPanel {
 
         // Table Card
         JPanel tableCard = new JPanel(new BorderLayout(0, 10));
-        tableCard.setBackground(Color.WHITE);
+        tableCard.setBackground(UIConstants.CARD_BG);
         tableCard.setBorder(UIConstants.createCardBorder());
 
         String[] cols = {"No", "NIP / NRP", "Nama Personel", "Satuan Kerja (Satker)", "No. Telepon", "Email Dinas", "Status"};
